@@ -2,7 +2,7 @@
 const nextConfig = {
   output: 'standalone',
   images: {
-    domains: ['tryhackswigger.ddns.net', 'localhost'],
+    domains: ['lenses-reporting-somewhere-thought.trycloudflare.com', 'tryhackswigger.ddns.net', 'localhost'],
   },
   webpack: (config) => {
     config.externals = [...(config.externals || []), 'cpu-features', 'sshcrypto'];
