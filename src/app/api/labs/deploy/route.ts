@@ -7,6 +7,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { labId, userId } = body;
 
+    console.log('Deploying lab with ID:', labId);
+
     if (!labId || !userId) {
       return NextResponse.json(
         { error: 'Missing required fields: labId and userId' },
@@ -17,11 +19,14 @@ export async function POST(request: NextRequest) {
     // Find the lab
     const lab = mockLabs.find(l => l.id === labId);
     if (!lab) {
+      console.error('Lab not found with ID:', labId);
       return NextResponse.json(
         { error: 'Lab not found' },
         { status: 404 }
       );
     }
+
+    console.log('Found lab:', lab.title, 'with dockerImage:', lab.dockerImage);
 
     // Deploy the container
     const containerInfo = await deployContainer({

@@ -19,18 +19,31 @@ const MEMORY_LIMIT = 512 * 1024 * 1024; // 512MB
 const CPU_LIMIT = 0.5;
 
 // Lab ID to Dockerfile path mapping (using /app/docker inside container)
+// Lab IDs from mockData.ts:
+// 1: SQL Injection → sqli-basic
+// 2: XSS → xss-reflected
+// 3: CSRF → csrf-bypass
+// 4: SSRF → ssrf-basic
+// 5: XXE → xxe-injection
+// 6: IDOR → idor-basic
+// 7: JWT → jwt-bypass
+// 8: Privilege Escalation → privesc-linux
+// 9: File Upload → file-upload
+// 10: Command Injection → cmd-injection
+// 11: LFI → lfi-basic
+// 12: Buffer Overflow → bof-basic
 const LAB_DOCKERFILE_MAP: { [key: string]: string } = {
-  '1': '/app/docker/idor-basic',
-  '2': '/app/docker/sqli-basic',
-  '3': '/app/docker/xss-reflected',
-  '4': '/app/docker/csrf-bypass',
-  '5': '/app/docker/lfi-basic',
-  '6': '/app/docker/cmd-injection',
-  '7': '/app/docker/file-upload',
-  '8': '/app/docker/xxe-injection',
-  '9': '/app/docker/ssrf-basic',
-  '10': '/app/docker/jwt-bypass',
-  '11': '/app/docker/privesc-linux',
+  '1': '/app/docker/sqli-basic',
+  '2': '/app/docker/xss-reflected',
+  '3': '/app/docker/csrf-bypass',
+  '4': '/app/docker/ssrf-basic',
+  '5': '/app/docker/xxe-injection',
+  '6': '/app/docker/idor-basic',
+  '7': '/app/docker/jwt-bypass',
+  '8': '/app/docker/privesc-linux',
+  '9': '/app/docker/file-upload',
+  '10': '/app/docker/cmd-injection',
+  '11': '/app/docker/lfi-basic',
   '12': '/app/docker/bof-basic'
 };
 
