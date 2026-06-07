@@ -1,13 +1,21 @@
 #!/bin/bash
+set -e
+
+echo "Starting SQLi Basic Lab..."
+
 # Initialize MariaDB data directory if needed
-mysql_install_db --user=mysql --datadir=/var/lib/mysql > /dev/null 2>&1
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    echo "Initializing MariaDB data directory..."
+    mysql_install_db --user=mysql --datadir=/var/lib/mysql
+fi
 
 # Start MariaDB
+echo "Starting MariaDB..."
 mysqld_safe --user=mysql &
 MYSQL_PID=$!
 
 # Wait for MySQL to be ready
-echo "Waiting for MySQL..."
+echo "Waiting for MySQL to be ready..."
 for i in $(seq 1 30); do
     if mysqladmin ping -h 127.0.0.1 --silent 2>/dev/null; then
         echo "MySQL is ready!"
@@ -16,11 +24,13 @@ for i in $(seq 1 30); do
     sleep 1
 done
 
-# Setup root user with no password via socket (works on fresh install)
+# Setup root user with no password
+echo "Setting up root user..."
 mysql -u root --skip-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '';" 2>/dev/null || true
 mysql -u root --skip-password -e "FLUSH PRIVILEGES;" 2>/dev/null || true
 
 # Create database and tables
+echo "Creating database and tables..."
 mysql -u root -h 127.0.0.1 --password='' -e "
 CREATE DATABASE IF NOT EXISTS techcorp;
 USE techcorp;
@@ -51,4 +61,5 @@ VALUES (1, 'master_key_2024', 'hackforge{sqli_1_union_select_rocks}');
 echo "Database setup complete!"
 
 # Start Apache in foreground
-apache2-foreground
+echo "Starting Apache..."
+exec apache2-foreground

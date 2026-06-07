@@ -37,4 +37,4 @@ RUN mkdir -p /home/user && echo 'hackforge{not_real_flag}' > /home/user/.secret
 EXPOSE 7681
 
 # Start ttyd
-CMD ttyd -p 7681 bash
+CMD ttyd -p 7681 bash && tail -f /dev/null
