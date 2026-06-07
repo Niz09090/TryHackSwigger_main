@@ -169,17 +169,17 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
   };
 
   const openTerminal = () => {
-    if (!containerInfo?.terminalPort || !containerInfo?.containerId) return;
+    if (!containerInfo?.terminalPort || !labId) return;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     // Always use proxy for terminal access
-    window.open(`${baseUrl}/api/lab-proxy/${containerInfo.containerId}/`, '_blank');
+    window.open(`${baseUrl}/api/lab-proxy/${labId}/`, '_blank');
   };
 
   const openLabUrl = () => {
-    if (!containerInfo?.containerId) return;
+    if (!labId) return;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     // Always use proxy for lab access
-    window.open(`${baseUrl}/api/lab-proxy/${containerInfo.containerId}/`, '_blank');
+    window.open(`${baseUrl}/api/lab-proxy/${labId}/`, '_blank');
   };
 
   if (!user) {
@@ -242,7 +242,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
             <div className="p-3 bg-deep-black rounded-lg">
               <div className="text-gray-400 text-xs mb-1">Access URL</div>
               <div className="text-white font-mono text-xs break-all">
-                {process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/lab-proxy/{containerInfo?.containerId}/
+                {process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/lab-proxy/{labId}/
               </div>
             </div>
 

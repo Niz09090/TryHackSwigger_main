@@ -53,20 +53,34 @@ async function handleProxy(
   { labId, path }: { labId: string; path: string[] }
 ) {
   try {
+    console.log('Proxy request received - labId:', labId, 'path:', path);
+    
     // Find the container by lab ID label
     const containers = await docker.listContainers({ all: true });
+    console.log('Total containers:', containers.length);
+    
     const containerInfo = containers.find(c => 
       c.Labels['lab-id'] === labId && 
       c.State === 'running'
     );
 
     if (!containerInfo) {
+      console.log('Container not found for labId:', labId);
+      console.log('Available containers with lab-id label:', 
+        containers.filter(c => c.Labels['lab-id']).map(c => ({
+          id: c.Id.substring(0, 12),
+          labId: c.Labels['lab-id'],
+          state: c.State
+        }))
+      );
       return NextResponse.json(
         { error: 'Lab container not found or not running' },
         { status: 404 }
       );
     }
 
+    console.log('Found container:', containerInfo.Id.substring(0, 12), 'for labId:', labId);
+    
     const container = docker.getContainer(containerInfo.Id);
     const containerDetails = await container.inspect();
     
