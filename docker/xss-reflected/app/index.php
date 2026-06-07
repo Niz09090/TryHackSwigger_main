@@ -170,7 +170,7 @@ if ($search) {
                     <h2>🔓 Admin Panel</h2>
                     <p>You have successfully authenticated as administrator.</p>
                     <div class="flag">
-                        🏆 Flag: flag{xss_r3fl3ct3d_b4sic}
+                        🏆 Flag: hackforge{xss_reflected_flag_found}
                     </div>
                 </div>
             <?php endif; ?>
