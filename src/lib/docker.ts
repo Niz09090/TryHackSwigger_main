@@ -18,20 +18,20 @@ const LAB_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 hours
 const MEMORY_LIMIT = 512 * 1024 * 1024; // 512MB
 const CPU_LIMIT = 0.5;
 
-// Lab ID to Dockerfile path mapping
+// Lab ID to Dockerfile path mapping (using /app/docker inside container)
 const LAB_DOCKERFILE_MAP: { [key: string]: string } = {
-  '1': 'docker/idor-basic',
-  '2': 'docker/sqli-basic',
-  '3': 'docker/xss-reflected',
-  '4': 'docker/csrf-bypass',
-  '5': 'docker/lfi-basic',
-  '6': 'docker/cmd-injection',
-  '7': 'docker/file-upload',
-  '8': 'docker/xxe-injection',
-  '9': 'docker/ssrf-basic',
-  '10': 'docker/jwt-bypass',
-  '11': 'docker/privesc-linux',
-  '12': 'docker/bof-basic'
+  '1': '/app/docker/idor-basic',
+  '2': '/app/docker/sqli-basic',
+  '3': '/app/docker/xss-reflected',
+  '4': '/app/docker/csrf-bypass',
+  '5': '/app/docker/lfi-basic',
+  '6': '/app/docker/cmd-injection',
+  '7': '/app/docker/file-upload',
+  '8': '/app/docker/xxe-injection',
+  '9': '/app/docker/ssrf-basic',
+  '10': '/app/docker/jwt-bypass',
+  '11': '/app/docker/privesc-linux',
+  '12': '/app/docker/bof-basic'
 };
 
 // Build image from local Dockerfile if it doesn't exist
@@ -51,11 +51,9 @@ async function buildImageIfNeeded(labId: string): Promise<string> {
     // Image doesn't exist locally, build it
     console.log(`Building image ${imageName} from ${dockerfilePath}...`);
     
-    const buildContext = path.resolve(process.cwd(), dockerfilePath);
-    
     return new Promise((resolve, reject) => {
       docker.buildImage({
-        context: buildContext,
+        context: dockerfilePath,
         src: ['.']
       }, { t: imageName }, (error: Error | null, stream: NodeJS.ReadableStream | undefined) => {
         if (error) {
