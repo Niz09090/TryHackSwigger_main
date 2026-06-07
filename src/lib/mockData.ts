@@ -17,7 +17,11 @@ import {
   ActivityType,
   SubscriptionPlan,
   SubscriptionStatus,
-  VpnStatus
+  VpnStatus,
+  BlueLab,
+  BlueLabCategory,
+  LabType,
+  BlueModule
 } from './types';
 
 // Mock Users

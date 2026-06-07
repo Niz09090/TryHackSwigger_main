@@ -53,6 +53,42 @@ export interface Lab {
   ports: number[];
 }
 
+export interface BlueLab {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  category: BlueLabCategory;
+  difficulty: Difficulty;
+  points: number;
+  estimatedTime: number;
+  learningObjectives: string[];
+  prerequisites?: string[];
+  flag: string;
+  hints: { text: string; cost: number }[];
+  solution?: string;
+  completedBy: number;
+  rating: number;
+  dockerImage?: string;
+  terminalEnabled: boolean;
+  ports: number[];
+  labType: LabType;
+  tools: string[];
+  pairedRedLabId?: string;
+}
+
+export interface BlueModule {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  category: BlueLabCategory;
+  icon: string;
+  estimatedHours: number;
+  totalLabs: number;
+  labs: string[];
+}
+
 export enum LabCategory {
   SQL_INJECTION = 'SQL Injection',
   XSS = 'Cross-Site Scripting',
@@ -74,6 +110,20 @@ export enum LabCategory {
   NETWORKING = 'Networking',
   WEB_CACHE = 'Web Cache Poisoning',
   RACE_CONDITION = 'Race Condition'
+}
+
+export enum BlueLabCategory {
+  LOG_ANALYSIS = 'Log Analysis / SIEM',
+  INCIDENT_RESPONSE = 'Incident Response',
+  DIGITAL_FORENSICS = 'Digital Forensics',
+  THREAT_HUNTING = 'Threat Hunting',
+  NETWORK_DEFENSE = 'Network Defense',
+  MALWARE_ANALYSIS = 'Malware Analysis'
+}
+
+export enum LabType {
+  GUIDED = 'Guided',
+  SCENARIO = 'Scenario'
 }
 
 export enum Difficulty {
