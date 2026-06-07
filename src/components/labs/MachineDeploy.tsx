@@ -169,8 +169,15 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
   };
 
   const openTerminal = () => {
-    if (!containerInfo?.terminalPort) return;
-    window.open(`http://localhost:${containerInfo.terminalPort}`, '_blank');
+    if (!containerInfo?.terminalPort || !containerInfo?.containerId) return;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    window.open(`${baseUrl}/api/lab-proxy/${containerInfo.containerId}/`, '_blank');
+  };
+
+  const openLabUrl = () => {
+    if (!containerInfo?.containerId) return;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    window.open(`${baseUrl}/api/lab-proxy/${containerInfo.containerId}/`, '_blank');
   };
 
   if (!user) {
@@ -273,6 +280,13 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
                   >
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Reset
+                  </Button>
+                  <Button
+                    onClick={openLabUrl}
+                    variant="outline"
+                    className="border-border-dark text-white hover:bg-surface-black"
+                  >
+                    <Server className="h-4 w-4" />
                   </Button>
                   {terminalEnabled && containerInfo.terminalPort && (
                     <Button

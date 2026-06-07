@@ -7,7 +7,7 @@ const docker = new Docker(
     : { socketPath: '/var/run/docker.sock' }
 );
 
-const LAB_NETWORK = 'hackforge-labs';
+const LAB_NETWORK = 'hackforge-network';
 const LAB_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 hours
 const MEMORY_LIMIT = 512 * 1024 * 1024; // 512MB
 const CPU_LIMIT = 0.5;
@@ -88,22 +88,18 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
     // Generate a unique container name
     const containerName = `lab-${config.labId}-${config.userId}-${Date.now()}`;
     
-    // Prepare port bindings
-    const portBindings: { [key: string]: Array<Record<string, string>> } = {};
+    // Prepare port bindings - only expose to Docker network, not host
     const exposedPorts: { [key: string]: {} } = {};
     
     config.ports.forEach(port => {
       const portKey = `${port}/tcp`;
       exposedPorts[portKey] = {};
-      portBindings[portKey] = [{ HostPort: '0' }]; // Let Docker assign a random port
     });
     
     // Add terminal port if enabled
-    let terminalPort: number | undefined;
     if (config.terminalEnabled) {
       const terminalPortKey = '7681/tcp';
       exposedPorts[terminalPortKey] = {};
-      portBindings[terminalPortKey] = [{ HostPort: '0' }];
     }
     
     // Create and start the container
@@ -112,7 +108,6 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
       Image: config.dockerImage,
       ExposedPorts: exposedPorts,
       HostConfig: {
-        PortBindings: portBindings,
         Memory: MEMORY_LIMIT,
         CpuQuota: CPU_LIMIT * 100000,
         NetworkMode: LAB_NETWORK,
@@ -131,26 +126,21 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
     const containerInfo = await container.inspect();
     const networkSettings = containerInfo.NetworkSettings.Networks[LAB_NETWORK];
     
-    // Get the mapped ports
-    const ports = containerInfo.NetworkSettings.Ports;
-    const firstPortKey = `${config.ports[0]}/tcp`;
-    const portMapping = ports[firstPortKey]?.[0];
-    const hostPort = portMapping ? parseInt(portMapping.HostPort) : config.ports[0];
+    // Get the internal port (not host port since we're not exposing to host)
+    const internalPort = config.ports[0] || 80;
     
     // Get terminal port if enabled
-    let terminalHostPort: number | undefined;
+    let terminalPort: number | undefined;
     if (config.terminalEnabled) {
-      const terminalPortKey = '7681/tcp';
-      const terminalMapping = ports[terminalPortKey]?.[0];
-      terminalHostPort = terminalMapping ? parseInt(terminalMapping.HostPort) : undefined;
+      terminalPort = 7681;
     }
     
     return {
       containerId: container.id,
       ip: networkSettings?.IPAddress || 'localhost',
-      port: hostPort,
+      port: internalPort,
       expiresAt: new Date(Date.now() + LAB_TIMEOUT_MS),
-      terminalPort: terminalHostPort
+      terminalPort
     };
   } catch (error) {
     console.error('Error deploying container:', error);
@@ -190,18 +180,15 @@ export async function getContainerStatus(containerId: string): Promise<Container
     const networkSettings = containerInfo.NetworkSettings.Networks[LAB_NETWORK];
     const ip = networkSettings?.IPAddress || 'localhost';
     
-    // Get port mappings
+    // Get internal port from exposed ports
     const ports = containerInfo.NetworkSettings.Ports;
-    const portKeys = Object.keys(ports);
-    const firstPortKey = portKeys.find(key => key !== '7681/tcp') || portKeys[0];
-    const portMapping = ports[firstPortKey]?.[0];
-    const port = portMapping ? parseInt(portMapping.HostPort) : 80;
+    const portKeys = Object.keys(ports).filter(k => k !== '7681/tcp');
+    const port = portKeys.length > 0 ? parseInt(portKeys[0].split('/')[0]) : 80;
     
     // Get terminal port if available
     let terminalPort: number | undefined;
-    const terminalMapping = ports['7681/tcp']?.[0];
-    if (terminalMapping) {
-      terminalPort = parseInt(terminalMapping.HostPort);
+    if (ports['7681/tcp']) {
+      terminalPort = 7681;
     }
     
     // Determine status
