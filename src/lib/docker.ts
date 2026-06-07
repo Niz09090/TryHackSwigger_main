@@ -57,10 +57,15 @@ async function buildImageIfNeeded(labId: string): Promise<string> {
       docker.buildImage({
         context: buildContext,
         src: ['.']
-      }, { t: imageName }, (error: Error | null, stream: NodeJS.ReadableStream) => {
+      }, { t: imageName }, (error: Error | null, stream: NodeJS.ReadableStream | undefined) => {
         if (error) {
           console.error('Error building image:', error);
           return reject(error);
+        }
+        
+        if (!stream) {
+          console.error('Build stream is undefined');
+          return reject(new Error('Build stream is undefined'));
         }
         
         docker.modem.followProgress(stream, (err: Error | null) => {
