@@ -51,33 +51,37 @@ async function handleProxy(
   path: string[]
 ) {
   try {
-    console.log('Proxy request received - labId:', labId, 'path:', path);
+    console.log('=== Proxy Request ===');
+    console.log('labId received:', labId);
+    console.log('path:', path);
+    console.log('full URL:', request.url);
     
-    // Find the container by lab ID label
+    // Find the container by name pattern
     const containers = await docker.listContainers({ all: true });
     console.log('Total containers:', containers.length);
     
+    // Log all container names and labels for debugging
+    console.log('All running containers:');
+    containers.forEach(c => {
+      console.log(`  - Name: ${c.Names[0]}, Labels: ${JSON.stringify(c.Labels)}, State: ${c.State}`);
+    });
+    
+    // Find container by name pattern "lab-{labId}-"
     const containerInfo = containers.find(c => 
-      c.Labels['lab-id'] === labId && 
+      c.Names[0]?.includes(`lab-${labId}-`) && 
       c.State === 'running'
     );
 
     if (!containerInfo) {
       console.log('Container not found for labId:', labId);
-      console.log('Available containers with lab-id label:', 
-        containers.filter(c => c.Labels['lab-id']).map(c => ({
-          id: c.Id.substring(0, 12),
-          labId: c.Labels['lab-id'],
-          state: c.State
-        }))
-      );
+      console.log('Looking for name pattern: lab-${labId}-');
       return NextResponse.json(
         { error: 'Lab container not found or not running' },
         { status: 404 }
       );
     }
 
-    console.log('Found container:', containerInfo.Id.substring(0, 12), 'for labId:', labId);
+    console.log('Found container:', containerInfo.Names[0], 'ID:', containerInfo.Id.substring(0, 12));
     
     const container = docker.getContainer(containerInfo.Id);
     const containerDetails = await container.inspect();
@@ -85,6 +89,8 @@ async function handleProxy(
     // Get the container's internal IP on the Docker network
     const networkSettings = containerDetails.NetworkSettings.Networks[LAB_NETWORK];
     if (!networkSettings) {
+      console.log('Container not connected to hackforge-network');
+      console.log('Available networks:', Object.keys(containerDetails.NetworkSettings.Networks));
       return NextResponse.json(
         { error: 'Container not connected to lab network' },
         { status: 500 }
@@ -92,6 +98,7 @@ async function handleProxy(
     }
     
     const containerIP = networkSettings.IPAddress;
+    console.log('Container IP on hackforge-network:', containerIP);
     
     // Build the target URL using container internal IP and port 80
     const pathString = path.join('/') || '/';
@@ -111,6 +118,8 @@ async function handleProxy(
       duplex: 'half',
     });
 
+    console.log('Response status:', response.status);
+    
     // Return the response
     const responseBody = await response.arrayBuffer();
     
@@ -125,6 +134,7 @@ async function handleProxy(
     });
   } catch (error) {
     console.error('Proxy error:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
     return NextResponse.json(
       { error: 'Failed to proxy request to lab container' },
       { status: 500 }
