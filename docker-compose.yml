@@ -3,11 +3,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_BASE_URL=https://lenses-reporting-somewhere-thought.trycloudflare.com
     ports:
       - "3004:3000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_BASE_URL=https://lenses-reporting-somewhere-thought.trycloudflare.com
     user: root
     restart: unless-stopped
     networks:
