@@ -242,14 +242,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
             <div className="p-3 bg-deep-black rounded-lg">
               <div className="text-gray-400 text-xs mb-1">Access URL</div>
               <div className="text-white font-mono text-xs break-all">
-                {process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/lab-proxy/{containerStatus.containerId}/
-              </div>
-            </div>
-
-            <div className="p-3 bg-deep-black rounded-lg">
-              <div className="text-gray-400 text-xs mb-1">Access URL</div>
-              <div className="text-white font-mono text-sm break-all">
-                http://{containerStatus.ip}:{containerStatus.port}
+                {process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/lab-proxy/{containerInfo?.containerId}/
               </div>
             </div>
 
