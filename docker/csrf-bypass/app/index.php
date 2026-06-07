@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $success = "Successfully transferred $$amount to account $transfer_to";
         
         if ($transfer_to === 'admin' && $amount >= 1000) {
-            $success .= " - Flag: hackforge{csrf_bypass_flag_found}";
+            $success .= " - Flag: flag{csrf_byp4ss_b4s1c}";
         }
     } else {
         $error = "Invalid transfer amount";

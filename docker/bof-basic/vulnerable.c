@@ -4,7 +4,7 @@
 
 void vulnerable_function(char *input) {
     char buffer[64];
-    char secret[] = "hackforge{bof_exploit_success}";
+    char secret[] = "flag{b0f_b4s1c_buff3r_0v3rfl0w}";
     
     // VULNERABLE: No bounds checking - buffer overflow
     strcpy(buffer, input);

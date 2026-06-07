@@ -170,7 +170,7 @@ if ($search) {
                     <h2>🔓 Admin Panel</h2>
                     <p>You have successfully authenticated as administrator.</p>
                     <div class="flag">
-                        🏆 Flag: hackforge{xss_reflected_flag_found}
+                        🏆 Flag: flag{xss_r3fl3ct3d_b4sic}
                     </div>
                 </div>
             <?php endif; ?>
@@ -183,7 +183,7 @@ if ($search) {
     
     <script>
         // Set flag in cookie for XSS exploitation
-        document.cookie = "flag=hackforge{xss_reflected_flag_found}; path=/";
+        document.cookie = "flag=flag{xss_r3fl3ct3d_b4sic}; path=/";
         document.cookie = "admin_session=guest; path=/";
     </script>
 </body>

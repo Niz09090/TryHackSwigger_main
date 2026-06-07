@@ -163,9 +163,9 @@ if ($host) {
                     <pre><?php echo htmlspecialchars($result); ?></pre>
                 </div>
                 
-                <?php if (strpos($result, 'hackforge') !== false): ?>
+                <?php if (strpos($result, 'flag') !== false || strpos($result, 'hackforge') !== false): ?>
                     <div class="flag">
-                        🏆 Flag found: hackforge{cmd_injection_flag}
+                        🏆 Flag found: flag{cmd_1nj3ct10n_b4s1c}
                     </div>
                 <?php endif; ?>
             <?php endif; ?>

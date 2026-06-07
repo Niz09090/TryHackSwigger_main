@@ -14,11 +14,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $conn->query($query);
     
     if ($result) {
+        // Check if multiple rows returned (SQL injection detected)
+        $num_rows = $result->num_rows;
         $user = $result->fetch_assoc();
         
         if ($user) {
             $success = "Welcome back, {$user['username']}! You are logged in successfully.";
             $success .= "<br>Role: {$user['role']} | Department: {$user['department']}";
+            
+            // Display flag if user is admin or SQL injection detected
+            if ($user['role'] === 'admin' || $num_rows > 1) {
+                $success .= "<br><br><strong>🎉 FLAG: flag{sql_injection_b4sic_bypas5}</strong>";
+            }
         } else {
             $error = 'Invalid credentials';
         }

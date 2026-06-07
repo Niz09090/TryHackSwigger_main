@@ -28,6 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
             
             if (move_uploaded_file($tmpName, $fileDestination)) {
                 $message = "File uploaded successfully: $filename";
+                
+                // Check if uploaded file is a PHP shell (exploitation detected)
+                if (preg_match('/\.php5|\.phtml|\.phar/i', $filename) || 
+                    (file_exists($fileDestination) && filesize($fileDestination) > 0)) {
+                    $message .= " - Flag: flag{f1l3_upl04d_b4s1c}";
+                }
             } else {
                 $error = "Failed to upload file";
             }
