@@ -171,13 +171,23 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
   const openTerminal = () => {
     if (!containerInfo?.terminalPort || !containerInfo?.containerId) return;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    window.open(`${baseUrl}/api/lab-proxy/${containerInfo.containerId}/`, '_blank');
+    // Use proxy for public access, or direct port for local access
+    if (baseUrl.includes('trycloudflare.com')) {
+      window.open(`${baseUrl}/api/lab-proxy/${containerInfo.containerId}/`, '_blank');
+    } else {
+      window.open(`http://${containerInfo.ip}:${containerInfo.terminalPort}`, '_blank');
+    }
   };
 
   const openLabUrl = () => {
     if (!containerInfo?.containerId) return;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    window.open(`${baseUrl}/api/lab-proxy/${containerInfo.containerId}/`, '_blank');
+    // Use proxy for public access, or direct port for local access
+    if (baseUrl.includes('trycloudflare.com')) {
+      window.open(`${baseUrl}/api/lab-proxy/${containerInfo.containerId}/`, '_blank');
+    } else {
+      window.open(`http://${containerInfo.ip}:${containerInfo.port}`, '_blank');
+    }
   };
 
   if (!user) {
@@ -245,6 +255,13 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
               <div className="p-3 bg-deep-black rounded-lg">
                 <div className="text-gray-400 text-xs mb-1">Port</div>
                 <div className="text-white font-mono text-sm">{containerStatus.port}</div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-deep-black rounded-lg">
+              <div className="text-gray-400 text-xs mb-1">Access URL</div>
+              <div className="text-white font-mono text-sm break-all">
+                http://{containerStatus.ip}:{containerStatus.port}
               </div>
             </div>
 

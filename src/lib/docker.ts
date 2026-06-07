@@ -137,18 +137,27 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
     // Generate a unique container name
     const containerName = `lab-${config.labId}-${config.userId}-${Date.now()}`;
     
-    // Prepare port bindings - only expose to Docker network, not host
+    // Prepare port bindings - expose to host with random port
+    const portBindings: { [key: string]: Array<Record<string, string>> } = {};
     const exposedPorts: { [key: string]: {} } = {};
+    
+    // Generate random port between 30000-35000
+    const randomPort = Math.floor(Math.random() * (35000 - 30000 + 1)) + 30000;
     
     config.ports.forEach(port => {
       const portKey = `${port}/tcp`;
       exposedPorts[portKey] = {};
+      portBindings[portKey] = [{ HostPort: randomPort.toString() }];
     });
     
     // Add terminal port if enabled
+    let terminalHostPort: number | undefined;
     if (config.terminalEnabled) {
       const terminalPortKey = '7681/tcp';
       exposedPorts[terminalPortKey] = {};
+      const terminalRandomPort = Math.floor(Math.random() * (35000 - 30000 + 1)) + 30000;
+      portBindings[terminalPortKey] = [{ HostPort: terminalRandomPort.toString() }];
+      terminalHostPort = terminalRandomPort;
     }
     
     // Create and start the container
@@ -157,6 +166,7 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
       Image: imageName,
       ExposedPorts: exposedPorts,
       HostConfig: {
+        PortBindings: portBindings,
         Memory: MEMORY_LIMIT,
         CpuQuota: CPU_LIMIT * 100000,
         NetworkMode: LAB_NETWORK,
@@ -173,21 +183,23 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
     
     // Get container info
     const containerInfo = await container.inspect();
-    const networkSettings = containerInfo.NetworkSettings.Networks[LAB_NETWORK];
     
-    // Get the internal port (not host port since we're not exposing to host)
-    const internalPort = config.ports[0] || 80;
+    // Get the mapped host port
+    const ports = containerInfo.NetworkSettings.Ports;
+    const firstPortKey = `${config.ports[0]}/tcp`;
+    const portMapping = ports[firstPortKey]?.[0];
+    const hostPort = portMapping ? parseInt(portMapping.HostPort) : randomPort;
     
     // Get terminal port if enabled
     let terminalPort: number | undefined;
-    if (config.terminalEnabled) {
-      terminalPort = 7681;
+    if (config.terminalEnabled && terminalHostPort) {
+      terminalPort = terminalHostPort;
     }
     
     return {
       containerId: container.id,
-      ip: networkSettings?.IPAddress || 'localhost',
-      port: internalPort,
+      ip: '192.168.0.4',
+      port: hostPort,
       expiresAt: new Date(Date.now() + LAB_TIMEOUT_MS),
       terminalPort
     };
@@ -228,17 +240,20 @@ export async function getContainerStatus(containerId: string): Promise<Container
     
     // Get network info
     const networkSettings = containerInfo.NetworkSettings.Networks[LAB_NETWORK];
-    const ip = networkSettings?.IPAddress || 'localhost';
+    const ip = '192.168.0.4';
     
-    // Get internal port from exposed ports
+    // Get host port from port mappings
     const ports = containerInfo.NetworkSettings.Ports;
     const portKeys = Object.keys(ports).filter(k => k !== '7681/tcp');
-    const port = portKeys.length > 0 ? parseInt(portKeys[0].split('/')[0]) : 80;
+    const firstPortKey = portKeys[0];
+    const portMapping = ports[firstPortKey]?.[0];
+    const port = portMapping ? parseInt(portMapping.HostPort) : 0;
     
     // Get terminal port if available
     let terminalPort: number | undefined;
-    if (ports['7681/tcp']) {
-      terminalPort = 7681;
+    const terminalMapping = ports['7681/tcp']?.[0];
+    if (terminalMapping) {
+      terminalPort = parseInt(terminalMapping.HostPort);
     }
     
     // Determine status

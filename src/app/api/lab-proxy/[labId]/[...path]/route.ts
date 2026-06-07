@@ -67,32 +67,26 @@ async function handleProxy(
     const container = docker.getContainer(containerInfo.Id);
     const containerDetails = await container.inspect();
     
-    // Get the container's internal IP and port
-    const networkSettings = containerDetails.NetworkSettings.Networks[LAB_NETWORK];
-    if (!networkSettings) {
-      return NextResponse.json(
-        { error: 'Container not on hackforge network' },
-        { status: 500 }
-      );
-    }
-
-    const containerIP = networkSettings.IPAddress;
+    // Get the host IP and mapped port (since we're using host port mapping)
+    const hostIP = '192.168.0.4';
     
-    // Get the exposed port (first non-terminal port)
+    // Get the mapped host port (first non-terminal port)
     const ports = containerDetails.NetworkSettings.Ports;
     const portKeys = Object.keys(ports).filter(k => k !== '7681/tcp');
-    const targetPort = portKeys.length > 0 ? parseInt(portKeys[0].split('/')[0]) : 80;
+    const firstPortKey = portKeys[0];
+    const portMapping = ports[firstPortKey]?.[0];
+    const targetPort = portMapping ? parseInt(portMapping.HostPort) : 80;
 
-    // Build the target URL
+    // Build the target URL using host IP and mapped port
     const pathString = path.join('/') || '/';
-    const targetUrl = `http://${containerIP}:${targetPort}${pathString}${request.nextUrl.search}`;
+    const targetUrl = `http://${hostIP}:${targetPort}${pathString}${request.nextUrl.search}`;
     
     // Proxy the request
     const response = await fetch(targetUrl, {
       method: request.method,
       headers: {
         ...Object.fromEntries(request.headers.entries()),
-        host: `${containerIP}:${targetPort}`,
+        host: `${hostIP}:${targetPort}`,
       },
       body: request.body,
       // @ts-ignore
