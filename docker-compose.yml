@@ -12,11 +12,15 @@ services:
     user: root
     restart: unless-stopped
     networks:
+      - default
       - hackforge-network
     volumes:
       - /opt/hackforge/docker:/app/docker
       - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
-  hackforge-network:
+  default:
     driver: bridge
+  hackforge-network:
+    external: true
+    name: hackforge-network
