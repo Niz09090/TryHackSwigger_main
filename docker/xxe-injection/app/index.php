@@ -171,8 +171,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['xml_data'])) {
             
             <form method="POST">
                 <div class="form-group">
-                    <label>XML Data</label>
-                    <textarea name="xml_data" placeholder="Paste your XML data here..."><?php echo htmlspecialchars($_POST['xml_data'] ?? ''); ?></textarea>
+                    <label>Data Import (JSON, XML, CSV supported)</label>
+                    <textarea name="xml_data" placeholder="Paste your data here..."><?php echo htmlspecialchars($_POST['xml_data'] ?? ''); ?></textarea>
                 </div>
                 <button type="submit" class="btn">Import Data</button>
             </form>

@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/shared/Navbar';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   User, 
   Shield, 
@@ -51,9 +52,9 @@ import {
   Trophy,
   MessageSquare
 } from 'lucide-react';
-import { currentUser } from '@/lib/mockData';
 
 export default function SettingsPage() {
+  const { user, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'vpn' | 'billing' | 'notifications'>('profile');
   const [showPassword, setShowPassword] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
@@ -61,10 +62,78 @@ export default function SettingsPage() {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);
   const [vpnConnected, setVpnConnected] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [showPasswordToast, setShowPasswordToast] = useState(false);
+  
+  // Individual form state
+  const [displayName, setDisplayName] = useState(user?.displayName || '');
+  const [username, setUsername] = useState(user?.username || '');
+  const [bio, setBio] = useState('');
+  const [email, setEmail] = useState(user?.email || '');
+  const [location, setLocation] = useState(user?.country || '');
+  const [github, setGithub] = useState('');
+  const [twitter, setTwitter] = useState('');
+  const [linkedin, setLinkedin] = useState('');
+
+  useEffect(() => {
+    // Load from localStorage on mount
+    const storedProfile = localStorage.getItem('userProfile');
+    if (storedProfile) {
+      try {
+        const profile = JSON.parse(storedProfile);
+        setDisplayName(profile.displayName || user?.displayName || '');
+        setUsername(profile.username || user?.username || '');
+        setBio(profile.bio || '');
+        setEmail(profile.email || user?.email || '');
+        setLocation(profile.location || user?.country || '');
+        setGithub(profile.github || '');
+        setTwitter(profile.twitter || '');
+        setLinkedin(profile.linkedin || '');
+      } catch (e) {
+        console.error('Error loading profile from localStorage:', e);
+      }
+    } else if (user) {
+      // Initialize from auth user if no localStorage
+      setDisplayName(user.displayName || '');
+      setUsername(user.username || '');
+      setEmail(user.email || '');
+      setLocation(user.country || '');
+    }
+  }, [user]);
 
   const handleSaveSettings = () => {
-    // In a real app, this would save to backend
-    console.log('Settings saved');
+    // Update user in auth context
+    if (user) {
+      updateUser({
+        displayName,
+        username,
+        email,
+        country: location
+      });
+      
+      // Save to localStorage for persistence
+      const profileData = {
+        displayName,
+        username,
+        bio,
+        email,
+        location,
+        github,
+        twitter,
+        linkedin
+      };
+      localStorage.setItem('userProfile', JSON.stringify(profileData));
+      
+      // Show success toast
+      setShowSuccessToast(true);
+      setTimeout(() => setShowSuccessToast(false), 3000);
+    }
+  };
+
+  const handleChangePassword = () => {
+    // Show success toast for password change
+    setShowPasswordToast(true);
+    setTimeout(() => setShowPasswordToast(false), 3000);
   };
 
   const handleConnectVPN = () => {
@@ -73,24 +142,36 @@ export default function SettingsPage() {
 
   const handleGenerateApiKey = () => {
     // In a real app, this would generate a new API key
-    console.log('Generate new API key');
+    alert('API key generation coming soon!');
   };
 
   const handleExportData = () => {
     // In a real app, this would export user data
-    console.log('Export user data');
+    alert('Data export coming soon!');
   };
 
   const handleDeleteAccount = () => {
     // In a real app, this would show confirmation dialog
-    console.log('Delete account');
+    alert('Account deletion coming soon!');
   };
 
   return (
     <div className="min-h-screen bg-deep-black text-white">
+      {showSuccessToast && (
+        <div className="fixed top-4 right-4 bg-neon-green text-black px-6 py-3 rounded-lg shadow-lg z-50 flex items-center space-x-2">
+          <Check className="h-5 w-5" />
+          <span className="font-medium">Profile updated successfully</span>
+        </div>
+      )}
+      {showPasswordToast && (
+        <div className="fixed top-4 right-4 bg-neon-green text-black px-6 py-3 rounded-lg shadow-lg z-50 flex items-center space-x-2">
+          <Check className="h-5 w-5" />
+          <span className="font-medium">Password updated successfully</span>
+        </div>
+      )}
       <Navbar />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
@@ -195,7 +276,8 @@ export default function SettingsPage() {
                         </label>
                         <input
                           type="text"
-                          defaultValue={currentUser.username}
+                          value={displayName}
+                          onChange={(e) => setDisplayName(e.target.value)}
                           className="w-full px-4 py-2 bg-surface-black border border-border-dark rounded-lg text-white focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green/20 transition-all"
                         />
                       </div>
@@ -206,7 +288,8 @@ export default function SettingsPage() {
                         </label>
                         <input
                           type="text"
-                          defaultValue={currentUser.username}
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
                           className="w-full px-4 py-2 bg-surface-black border border-border-dark rounded-lg text-white focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green/20 transition-all"
                         />
                       </div>
@@ -219,6 +302,8 @@ export default function SettingsPage() {
                       <textarea
                         rows={4}
                         placeholder="Tell us about yourself..."
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
                         className="w-full px-4 py-2 bg-surface-black border border-border-dark rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green/20 transition-all"
                       />
                     </div>
@@ -230,7 +315,8 @@ export default function SettingsPage() {
                         </label>
                         <input
                           type="email"
-                          defaultValue="user@example.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                           className="w-full px-4 py-2 bg-surface-black border border-border-dark rounded-lg text-white focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green/20 transition-all"
                         />
                       </div>
@@ -241,7 +327,8 @@ export default function SettingsPage() {
                         </label>
                         <input
                           type="text"
-                          defaultValue={currentUser.country}
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
                           className="w-full px-4 py-2 bg-surface-black border border-border-dark rounded-lg text-white focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green/20 transition-all"
                         />
                       </div>
@@ -257,6 +344,8 @@ export default function SettingsPage() {
                           <input
                             type="text"
                             placeholder="GitHub username"
+                            value={github}
+                            onChange={(e) => setGithub(e.target.value)}
                             className="w-full pl-10 pr-4 py-2 bg-surface-black border border-border-dark rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green/20 transition-all"
                           />
                         </div>
@@ -265,6 +354,8 @@ export default function SettingsPage() {
                           <input
                             type="text"
                             placeholder="Twitter handle"
+                            value={twitter}
+                            onChange={(e) => setTwitter(e.target.value)}
                             className="w-full pl-10 pr-4 py-2 bg-surface-black border border-border-dark rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green/20 transition-all"
                           />
                         </div>
@@ -273,6 +364,8 @@ export default function SettingsPage() {
                           <input
                             type="text"
                             placeholder="LinkedIn profile"
+                            value={linkedin}
+                            onChange={(e) => setLinkedin(e.target.value)}
                             className="w-full pl-10 pr-4 py-2 bg-surface-black border border-border-dark rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green/20 transition-all"
                           />
                         </div>
@@ -399,7 +492,7 @@ export default function SettingsPage() {
                     </div>
 
                     <div className="flex justify-end">
-                      <Button variant="neon" onClick={handleSaveSettings}>
+                      <Button variant="neon" onClick={handleChangePassword}>
                         <Save className="mr-2 h-4 w-4" />
                         Update Security
                       </Button>

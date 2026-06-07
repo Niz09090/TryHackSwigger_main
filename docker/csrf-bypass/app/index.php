@@ -6,11 +6,15 @@ $_SESSION['user_id'] = 'user123';
 $_SESSION['username'] = 'john_doe';
 $_SESSION['balance'] = 5000;
 
+// Generate fake CSRF token (not actually validated)
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $transfer_to = $_POST['to_account'] ?? '';
     $amount = $_POST['amount'] ?? 0;
+    $csrf_token = $_POST['csrf_token'] ?? '';
     
-    // VULNERABLE: No CSRF token validation
+    // VULNERABLE: CSRF token exists but is not actually validated
     if ($amount > 0 && $amount <= $_SESSION['balance']) {
         $_SESSION['balance'] -= $amount;
         $success = "Successfully transferred $$amount to account $transfer_to";
@@ -187,6 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label>Amount ($)</label>
                     <input type="number" name="amount" placeholder="Enter amount" min="1" required>
                 </div>
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                 <button type="submit" class="btn">Transfer Funds</button>
             </form>
         </div>

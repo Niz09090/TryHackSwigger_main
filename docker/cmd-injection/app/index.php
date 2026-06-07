@@ -4,14 +4,20 @@ $result = '';
 $error = '';
 
 if ($host) {
-    // VULNERABLE: Command injection - no input sanitization
-    $command = "ping -c 4 " . $host;
+    // VULNERABLE: Basic filtering that can be bypassed
+    // Filter ; and | but not & or $()
+    $filteredHost = str_replace([';', '|'], '', $host);
+    
+    // Add fake legitimate output
+    $fakeOutput = "PING $filteredHost ($filteredHost): 56 data bytes\n64 bytes from $filteredHost: icmp_seq=0 ttl=64 time=0.123 ms\n64 bytes from $filteredHost: icmp_seq=1 ttl=64 time=0.145 ms\n64 bytes from $filteredHost: icmp_seq=2 ttl=64 time=0.132 ms\n64 bytes from $filteredHost: icmp_seq=3 ttl=64 time=0.128 ms\n\n--- $filteredHost ping statistics ---\n4 packets transmitted, 4 packets received, 0.0% packet loss\n";
+    
+    $command = "ping -c 4 " . $filteredHost;
     $output = shell_exec($command);
     
     if ($output) {
         $result = $output;
     } else {
-        $error = 'Failed to execute command';
+        $result = $fakeOutput;
     }
 }
 ?>

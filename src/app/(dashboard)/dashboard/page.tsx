@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,7 +52,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-deep-black text-white">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8">
         {/* User Stats Header */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Rank and Level */}
@@ -210,7 +210,7 @@ export default function DashboardPage() {
                     <Target className="h-4 w-4 text-neon-green" />
                     <span className="text-gray-300">Labs Completed</span>
                   </div>
-                  <span className="text-xl font-bold text-neon-green">12</span>
+                  <span className="text-xl font-bold text-neon-green">{mockActivities.filter(a => a.type === 'lab_completed' && a.user.id === user?.id).length}</span>
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -218,7 +218,7 @@ export default function DashboardPage() {
                     <Award className="h-4 w-4 text-neon-cyan" />
                     <span className="text-gray-300">Badges Earned</span>
                   </div>
-                  <span className="text-xl font-bold text-neon-cyan">8</span>
+                  <span className="text-xl font-bold text-neon-cyan">{user?.badges?.earned?.length || 0}</span>
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -226,7 +226,7 @@ export default function DashboardPage() {
                     <Trophy className="h-4 w-4 text-yellow-400" />
                     <span className="text-gray-300">Global Rank</span>
                   </div>
-                  <span className="text-xl font-bold text-yellow-400">#42</span>
+                  <span className="text-xl font-bold text-yellow-400">#{user?.rank || 'N/A'}</span>
                 </div>
               </CardContent>
             </Card>
@@ -329,7 +329,7 @@ export default function DashboardPage() {
                   variant="outline" 
                   asChild
                 >
-                  <Link href="/friends">
+                  <Link href="/forum">
                     <Users className="mr-2 h-4 w-4" />
                     View All Activity
                   </Link>

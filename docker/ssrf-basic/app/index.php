@@ -4,24 +4,39 @@ $result = '';
 $error = '';
 
 if ($url) {
-    // VULNERABLE: SSRF - no URL validation
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    // VULNERABLE: Basic IP filtering that can be bypassed
+    // Block 127.0.0.1 but not 0.0.0.0 or 127.0.0.2
+    $blockedIPs = ['127.0.0.1', 'localhost'];
+    $isBlocked = false;
     
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    
-    if ($response !== false) {
-        $result = "HTTP $httpCode: " . htmlspecialchars(substr($response, 0, 1000));
-        
-        if (strpos($response, 'hackforge') !== false) {
-            $result .= " - Flag: hackforge{ssrf_flag_found}";
+    foreach ($blockedIPs as $blockedIP) {
+        if (strpos($url, $blockedIP) !== false) {
+            $isBlocked = true;
+            break;
         }
+    }
+    
+    if ($isBlocked) {
+        $error = 'Access denied: Internal URLs are not allowed';
     } else {
-        $error = 'Failed to fetch URL';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        if ($response !== false) {
+            $result = "HTTP $httpCode: " . htmlspecialchars(substr($response, 0, 1000));
+            
+            if (strpos($response, 'hackforge') !== false) {
+                $result .= " - Flag: hackforge{ssrf_flag_found}";
+            }
+        } else {
+            $error = 'Failed to fetch URL';
+        }
     }
 }
 ?>

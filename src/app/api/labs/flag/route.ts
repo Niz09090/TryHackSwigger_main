@@ -24,8 +24,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if the flag is correct
-    if (flag === lab.flag) {
+    const submittedFlag = flag.trim();
+    const correctFlag = lab.flag.trim();
+    
+    console.log('Flag submission:', {
+      labId,
+      submitted: submittedFlag,
+      expected: correctFlag,
+      match: submittedFlag === correctFlag
+    });
+
+    if (submittedFlag === correctFlag) {
       // Award points and mark as completed
+      return NextResponse.json({
+        correct: true,
+        points: lab.points,
+        message: `Correct! You earned ${lab.points} points`
+      });
+    } else if (submittedFlag.toLowerCase() === correctFlag.toLowerCase()) {
+      // Case-insensitive fallback
+      console.log('Flag matched with case-insensitive comparison');
       return NextResponse.json({
         correct: true,
         points: lab.points,

@@ -172,7 +172,7 @@ export const mockLabs: Lab[] = [
       'Understand CSP bypasses',
       'Exploit reflected XSS'
     ],
-    flag: 'hackforge{xss_alert_executed}',
+    flag: 'hackforge{xss_reflected_flag_found}',
     hints: [
       { text: 'Check the search functionality for reflection', cost: 10 },
       { text: 'Try different event handlers', cost: 20 },
@@ -202,7 +202,7 @@ export const mockLabs: Lab[] = [
       'Bypass token validation',
       'Craft CSRF exploits'
     ],
-    flag: 'hackforge{csrf_token_bypass}',
+    flag: 'hackforge{csrf_bypass_flag_found}',
     hints: [
       { text: 'Analyze the token generation mechanism', cost: 15 },
       { text: 'Check if tokens are predictable', cost: 25 },
@@ -232,7 +232,7 @@ export const mockLabs: Lab[] = [
       'Extract sensitive credentials',
       'Understand DNS rebinding'
     ],
-    flag: 'hackforge{ssrf_metadata_accessed}',
+    flag: 'hackforge{ssrf_flag_found}',
     hints: [
       { text: 'Cloud providers have metadata endpoints', cost: 10 },
       { text: 'AWS: 169.254.169.254', cost: 15 },
@@ -262,7 +262,7 @@ export const mockLabs: Lab[] = [
       'Read local files via XXE',
       'Perform blind XXE attacks'
     ],
-    flag: 'hackforge{xxe_file_read}',
+    flag: 'hackforge{xxe_injection_flag}',
     hints: [
       { text: 'Look for XML parsing functionality', cost: 10 },
       { text: 'Try external entity declarations', cost: 15 },
@@ -292,7 +292,7 @@ export const mockLabs: Lab[] = [
       'Access unauthorized data',
       'Understand access control flaws'
     ],
-    flag: 'hackforge{idor_user_escalation}',
+    flag: 'hackforge{idor_flag_found}',
     hints: [
       { text: 'Check URL parameters for object IDs', cost: 10 },
       { text: 'Try changing user IDs in requests', cost: 15 },
@@ -322,7 +322,7 @@ export const mockLabs: Lab[] = [
       'Forge malicious tokens',
       'Bypass authentication mechanisms'
     ],
-    flag: 'hackforge{jwt_none_algorithm}',
+    flag: 'hackforge{jwt_bypass_flag}',
     hints: [
       { text: 'Analyze the JWT algorithm', cost: 15 },
       { text: 'Try brute-forcing the secret', cost: 25 },
@@ -382,7 +382,7 @@ export const mockLabs: Lab[] = [
       'Execute system commands',
       'Maintain persistence'
     ],
-    flag: 'hackforge{file_upload_webshell}',
+    flag: 'hackforge{file_upload_flag_found}',
     hints: [
       { text: 'Try different file extensions', cost: 10 },
       { text: 'Use double extensions', cost: 15 },
@@ -412,7 +412,7 @@ export const mockLabs: Lab[] = [
       'Execute system commands',
       'Chain commands for complex attacks'
     ],
-    flag: 'hackforge{cmd_injection_rce}',
+    flag: 'hackforge{cmd_injection_flag}',
     hints: [
       { text: 'Look for system() calls in backend', cost: 10 },
       { text: 'Try command chaining with ; && ||', cost: 15 },
@@ -442,7 +442,7 @@ export const mockLabs: Lab[] = [
       'Read sensitive files',
       'Bypass file inclusion filters'
     ],
-    flag: 'hackforge{lfi_etc_passwd}',
+    flag: 'hackforge{lfi_file_reader_flag}',
     hints: [
       { text: 'Look for file inclusion in parameters', cost: 10 },
       { text: 'Use ../ for path traversal', cost: 15 },

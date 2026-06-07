@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -146,12 +146,13 @@ export default function LoginPage() {
                     />
                     <span>Remember me</span>
                   </label>
-                  <Link 
-                    href="/forgot-password" 
+                  <button 
+                    type="button"
+                    onClick={() => alert('Password reset coming soon!')}
                     className="text-sm text-neon-cyan hover:text-neon-green transition-colors"
                   >
                     Forgot password?
-                  </Link>
+                  </button>
                 </div>
 
                 {/* Login Button */}
@@ -190,7 +191,7 @@ export default function LoginPage() {
                 <Button 
                   variant="outline" 
                   className="w-full border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
-                  onClick={() => console.log('Google SSO')}
+                  onClick={() => alert('SSO integration coming soon!')}
                   disabled={isLoading}
                 >
                   <Chrome className="mr-2 h-4 w-4" />
@@ -200,7 +201,7 @@ export default function LoginPage() {
                 <Button 
                   variant="outline" 
                   className="w-full border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
-                  onClick={() => console.log('GitHub SSO')}
+                  onClick={() => alert('SSO integration coming soon!')}
                   disabled={isLoading}
                 >
                   <Github className="mr-2 h-4 w-4" />

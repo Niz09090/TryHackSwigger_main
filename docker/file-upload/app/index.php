@@ -16,19 +16,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
     $fileSize = $file['size'];
     $fileError = $file['error'];
     
-    // VULNERABLE: No file type validation, no extension checking
+    // VULNERABLE: Only checks .php extension, not .php5, .phtml, .phar
+    $fileExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    $blockedExtensions = ['php'];
+    
     if ($fileError === 0) {
-        $fileDestination = $uploadDir . $filename;
-        
-        if (move_uploaded_file($tmpName, $fileDestination)) {
-            $message = "File uploaded successfully: $filename";
-            
-            // Check if uploaded file contains flag
-            if (pathinfo($filename, PATHINFO_EXTENSION) === 'php') {
-                $message .= " - Flag: hackforge{file_upload_flag_found}";
-            }
+        if (in_array($fileExtension, $blockedExtensions)) {
+            $error = "PHP files are not allowed for security reasons";
         } else {
-            $error = "Failed to upload file";
+            $fileDestination = $uploadDir . $filename;
+            
+            if (move_uploaded_file($tmpName, $fileDestination)) {
+                $message = "File uploaded successfully: $filename";
+            } else {
+                $error = "Failed to upload file";
+            }
         }
     } else {
         $error = "Error uploading file";

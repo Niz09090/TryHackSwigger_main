@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -65,7 +65,7 @@ export default function LearningPathsPage() {
     <div className="min-h-screen bg-deep-black text-white">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">
@@ -181,7 +181,7 @@ export default function LearningPathsPage() {
                   className="w-full btn-neon"
                   asChild
                 >
-                  <Link href={`/learn/${path.id}`}>
+                  <Link href={`/learning-paths/${path.slug}`}>
                     {path.progress > 0 ? 'Continue Learning' : 'Start Path'}
                     <Play className="ml-2 h-4 w-4" />
                   </Link>

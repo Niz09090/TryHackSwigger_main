@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -287,19 +287,21 @@ export default function RegisterPage() {
                     />
                     <span className="flex-1">
                       I agree to the{' '}
-                      <Link 
-                        href="/terms" 
+                      <button 
+                        type="button"
+                        onClick={() => alert('Terms coming soon!')}
                         className="text-neon-cyan hover:text-neon-green transition-colors"
                       >
                         Terms and Conditions
-                      </Link>
+                      </button>
                       {' '}and{' '}
-                      <Link 
-                        href="/privacy" 
+                      <button 
+                        type="button"
+                        onClick={() => alert('Privacy Policy coming soon!')}
                         className="text-neon-cyan hover:text-neon-green transition-colors"
                       >
                         Privacy Policy
-                      </Link>
+                      </button>
                     </span>
                   </label>
                   {errors.terms && (
@@ -343,7 +345,7 @@ export default function RegisterPage() {
                 <Button 
                   variant="outline" 
                   className="w-full border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
-                  onClick={() => console.log('Google SSO')}
+                  onClick={() => alert('SSO integration coming soon!')}
                   disabled={isLoading}
                 >
                   <Chrome className="mr-2 h-4 w-4" />
@@ -353,7 +355,7 @@ export default function RegisterPage() {
                 <Button 
                   variant="outline" 
                   className="w-full border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
-                  onClick={() => console.log('GitHub SSO')}
+                  onClick={() => alert('SSO integration coming soon!')}
                   disabled={isLoading}
                 >
                   <Github className="mr-2 h-4 w-4" />

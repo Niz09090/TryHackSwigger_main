@@ -1,16 +1,25 @@
 <?php
 $search = $_GET['q'] ?? '';
 $results = [];
+$isAdmin = false;
 
+// Basic client-side filtering (can be bypassed)
 if ($search) {
-    // VULNERABLE: No output encoding - reflected XSS
+    // Filter obvious XSS patterns
+    $filteredSearch = str_replace(['<script', '</script>', 'javascript:', 'onerror', 'onload'], '', $search);
+    
+    // VULNERABLE: Still vulnerable after filtering
     $results = [
-        "Search results for: $search",
-        "Found 3 matching documents",
-        "Document 1: Contains '$search'",
-        "Document 2: Related to '$search'",
-        "Document 3: About '$search'"
+        "Found 3 documents matching your query",
+        "Document 1: Technical documentation about web security",
+        "Document 2: Best practices for secure coding",
+        "Document 3: Common vulnerabilities and mitigation strategies"
     ];
+    
+    // Check if admin cookie is set (set via XSS)
+    if (isset($_COOKIE['admin_session']) && $_COOKIE['admin_session'] === 'xss_admin_access') {
+        $isAdmin = true;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -101,6 +110,17 @@ if ($search) {
         .result-item:last-child {
             margin-bottom: 0;
         }
+        .admin-panel {
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid #ff5252;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        .admin-panel h2 {
+            color: #ff5252;
+            margin-bottom: 20px;
+        }
         .flag {
             background: rgba(255, 215, 0, 0.1);
             border: 1px solid #ffd700;
@@ -143,18 +163,28 @@ if ($search) {
                         <?php echo $result; ?>
                     </div>
                 <?php endforeach; ?>
-                
-                <?php if (strpos($search, 'flag') !== false || strpos($search, 'hackforge') !== false): ?>
-                    <div class="flag">
-                        🏆 Congratulations! You found the flag: hackforge{xss_reflected_flag_found}
-                    </div>
-                <?php endif; ?>
             </div>
+            
+            <?php if ($isAdmin): ?>
+                <div class="admin-panel">
+                    <h2>🔓 Admin Panel</h2>
+                    <p>You have successfully authenticated as administrator.</p>
+                    <div class="flag">
+                        🏆 Flag: hackforge{xss_reflected_flag_found}
+                    </div>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
     
     <div class="footer">
         <a href="hint.php">Need help with this lab?</a>
     </div>
+    
+    <script>
+        // Set flag in cookie for XSS exploitation
+        document.cookie = "flag=hackforge{xss_reflected_flag_found}; path=/";
+        document.cookie = "admin_session=guest; path=/";
+    </script>
 </body>
 </html>

@@ -211,7 +211,7 @@ export default function LabDetailPage() {
     <div className="min-h-screen bg-deep-black text-white">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8">
         {/* Lab Header */}
         <div className="mb-8">
           <div className="flex items-start justify-between mb-4">
@@ -559,9 +559,9 @@ export default function LabDetailPage() {
                 </Button>
                 
                 <Button variant="outline" className="w-full justify-start" asChild>
-                  <Link href={`/learn/${lab.category.toLowerCase().replace(' ', '-')}`}>
+                  <Link href="/learn">
                     <BookOpen className="mr-2 h-4 w-4" />
-                    Learning Path
+                    Learning Paths
                   </Link>
                 </Button>
               </CardContent>

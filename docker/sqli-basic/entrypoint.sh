@@ -28,12 +28,24 @@ CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50),
     password VARCHAR(50),
-    flag VARCHAR(100)
+    role VARCHAR(20),
+    department VARCHAR(50),
+    email VARCHAR(100)
 );
-INSERT IGNORE INTO users (id, username, password, flag) 
-VALUES (1, 'admin', 'secret123', 'hackforge{sqli_1_union_select_rocks}');
-INSERT IGNORE INTO users (id, username, password, flag)
-VALUES (2, 'john', 'password1', 'hackforge{sqli_2_second_user}');
+CREATE TABLE IF NOT EXISTS admin_secrets (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    secret_key VARCHAR(100),
+    flag VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+INSERT IGNORE INTO users (id, username, password, role, department, email) 
+VALUES (1, 'admin', 'secret123', 'Administrator', 'IT', 'admin@techcorp.com');
+INSERT IGNORE INTO users (id, username, password, role, department, email)
+VALUES (2, 'john', 'password1', 'Employee', 'Sales', 'john@techcorp.com');
+INSERT IGNORE INTO users (id, username, password, role, department, email)
+VALUES (3, 'sarah', 'pass123', 'Employee', 'HR', 'sarah@techcorp.com');
+INSERT IGNORE INTO admin_secrets (id, secret_key, flag)
+VALUES (1, 'master_key_2024', 'hackforge{sqli_1_union_select_rocks}');
 "
 
 echo "Database setup complete!"

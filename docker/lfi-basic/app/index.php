@@ -1,26 +1,29 @@
 <?php
-$file = $_GET['file'] ?? 'home.txt';
+$page = $_GET['page'] ?? 'home';
 $content = '';
 $error = '';
 
-// VULNERABLE: No input validation - allows LFI
-$allowed_files = ['home.txt', 'about.txt', 'services.txt'];
-$files_dir = __DIR__ . '/files/';
+// VULNERABLE: Basic path traversal filtering that can be bypassed
+$allowed_pages = ['home', 'about', 'services'];
+$pages_dir = __DIR__ . '/pages/';
 
-if (in_array($file, $allowed_files)) {
-    $filepath = $files_dir . $file;
+// Filter obvious path traversal sequences
+$filteredPage = str_replace(['../', '..\\'], '', $page);
+
+if (in_array($page, $allowed_pages)) {
+    $filepath = $pages_dir . $page . '.txt';
     if (file_exists($filepath)) {
         $content = file_get_contents($filepath);
     } else {
-        $error = 'File not found';
+        $error = 'Page not found';
     }
 } else {
-    // Try to load the file directly (vulnerable to LFI)
-    $filepath = $file;
+    // Try to load the page directly (vulnerable to LFI with bypass)
+    $filepath = $filteredPage;
     if (file_exists($filepath) && is_readable($filepath)) {
         $content = file_get_contents($filepath);
     } else {
-        $error = 'File not found or not accessible';
+        $error = 'Page not found or not accessible';
     }
 }
 ?>
@@ -155,16 +158,16 @@ if (in_array($file, $allowed_files)) {
             <?php endif; ?>
             
             <div class="file-list">
-                <div class="file-item" onclick="location.href='?file=home.txt'">
-                    <h3>📄 home.txt</h3>
-                    <p>Welcome document</p>
+                <div class="file-item" onclick="location.href='?page=home'">
+                    <h3>📄 Home</h3>
+                    <p>Welcome page</p>
                 </div>
-                <div class="file-item" onclick="location.href='?file=about.txt'">
-                    <h3>📄 about.txt</h3>
+                <div class="file-item" onclick="location.href='?page=about'">
+                    <h3>📄 About</h3>
                     <p>About us</p>
                 </div>
-                <div class="file-item" onclick="location.href='?file=services.txt'">
-                    <h3>📄 services.txt</h3>
+                <div class="file-item" onclick="location.href='?page=services'">
+                    <h3>📄 Services</h3>
                     <p>Our services</p>
                 </div>
             </div>

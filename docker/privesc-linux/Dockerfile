@@ -26,7 +26,7 @@ RUN chmod 4755 /usr/local/bin/suid_vuln
 RUN rm /tmp/suid_vuln.c
 
 # Create misconfigured cron job
-RUN echo '* * * * * root echo "hackforge{privesc_cron_flag}" > /tmp/cron_flag' >> /etc/crontab
+RUN echo '* * * * * root cat /root/flag.txt > /tmp/cron_flag 2>/dev/null' >> /etc/crontab
 
 # Make /etc/passwd writable (world-writable)
 RUN chmod 666 /etc/passwd
@@ -37,6 +37,11 @@ RUN echo 'hackforge ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 # Create flag in /root
 RUN echo 'hackforge{privesc_linux_root_flag}' > /root/flag.txt
 RUN chmod 600 /root/flag.txt
+
+# Add decoy flags to mislead
+RUN echo 'hackforge{fake_flag_1}' > /tmp/fake_flag.txt
+RUN echo 'hackforge{decoy_flag}' > /home/hackforge/.secret
+RUN echo 'hackforge{not_the_flag}' > /etc/decoy
 
 # Expose SSH and ttyd ports
 EXPOSE 22 7681

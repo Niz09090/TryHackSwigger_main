@@ -17,15 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $result->fetch_assoc();
         
         if ($user) {
-            $success = "Welcome back, {$user['username']}! You are logged in.";
-            if ($user['flag']) {
-                $success .= " Flag: {$user['flag']}";
-            }
+            $success = "Welcome back, {$user['username']}! You are logged in successfully.";
+            $success .= "<br>Role: {$user['role']} | Department: {$user['department']}";
         } else {
             $error = 'Invalid credentials';
         }
     } else {
-        $error = 'Database error';
+        $error = 'Invalid credentials';
     }
 }
 ?>

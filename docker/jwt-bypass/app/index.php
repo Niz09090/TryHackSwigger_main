@@ -16,11 +16,16 @@ function verifyJWT($token, $secret = 'secret123') {
     $parts = explode('.', $token);
     if (count($parts) !== 3) return false;
     
-    $header = $parts[0];
+    $header = json_decode(base64url_decode($parts[0]), true);
     $payload = $parts[1];
     $signature = $parts[2];
     
-    $validSignature = hash_hmac('sha256', $header . '.' . $payload, $secret, true);
+    // VULNERABLE: Algorithm confusion - accepts "none" algorithm
+    if (isset($header['alg']) && strtolower($header['alg']) === 'none') {
+        return json_decode(base64url_decode($payload), true);
+    }
+    
+    $validSignature = hash_hmac('sha256', $parts[0] . '.' . $parts[1], $secret, true);
     $validSignature = base64url_encode($validSignature);
     
     return $signature === $validSignature ? json_decode(base64url_decode($payload), true) : false;
@@ -51,6 +56,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $token = createJWT($payload);
         $_SESSION['token'] = $token;
         $success = "Login successful! Token: $token";
+    } else if ($username === 'user' && $password === 'user123') {
+        // Regular user login - no flag access
+        $payload = [
+            'user' => 'user',
+            'role' => 'user',
+            'exp' => time() + 3600
+        ];
+        $token = createJWT($payload);
+        $_SESSION['token'] = $token;
+        $success = "Login successful! Token: $token";
     } else {
         $error = 'Invalid credentials';
     }
@@ -62,6 +77,8 @@ if (isset($_GET['token'])) {
     
     if ($decoded && $decoded['role'] === 'admin') {
         $success = "Admin access granted! Flag: hackforge{jwt_bypass_flag}";
+    } else if ($decoded && $decoded['role'] === 'user') {
+        $error = 'Access denied: User role does not have admin privileges';
     } else {
         $error = 'Invalid or expired token';
     }
