@@ -197,6 +197,10 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
     // Get container info
     const containerInfo = await container.inspect();
     
+    // Get the container's internal IP on the Docker network
+    const networkSettings = containerInfo.NetworkSettings.Networks[LAB_NETWORK];
+    const containerIP = networkSettings?.IPAddress || 'unknown';
+    
     // Get the mapped host port
     const ports = containerInfo.NetworkSettings.Ports;
     const firstPortKey = `${config.ports[0]}/tcp`;
@@ -211,7 +215,7 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
     
     return {
       containerId: container.id,
-      ip: '192.168.0.4',
+      ip: containerIP,
       port: hostPort,
       expiresAt: new Date(Date.now() + LAB_TIMEOUT_MS),
       terminalPort

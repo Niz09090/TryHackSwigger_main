@@ -10,6 +10,9 @@ const docker = new Docker(
 
 const LAB_NETWORK = 'hackforge-network';
 
+// In-memory map to store container IPs
+const containerIPMap = new Map<string, string>();
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { labId: string; path: string[] } }
@@ -67,26 +70,32 @@ async function handleProxy(
     const container = docker.getContainer(containerInfo.Id);
     const containerDetails = await container.inspect();
     
-    // Get the host IP and mapped port (since we're using host port mapping)
-    const hostIP = '192.168.0.4';
+    // Get the container's internal IP on the Docker network
+    const networkSettings = containerDetails.NetworkSettings.Networks[LAB_NETWORK];
+    if (!networkSettings) {
+      return NextResponse.json(
+        { error: 'Container not connected to lab network' },
+        { status: 500 }
+      );
+    }
     
-    // Get the mapped host port (first non-terminal port)
-    const ports = containerDetails.NetworkSettings.Ports;
-    const portKeys = Object.keys(ports).filter(k => k !== '7681/tcp');
-    const firstPortKey = portKeys[0];
-    const portMapping = ports[firstPortKey]?.[0];
-    const targetPort = portMapping ? parseInt(portMapping.HostPort) : 80;
-
-    // Build the target URL using host IP and mapped port
+    const containerIP = networkSettings.IPAddress;
+    
+    // Store the IP in the map for future use
+    containerIPMap.set(labId, containerIP);
+    
+    // Build the target URL using container internal IP and port 80
     const pathString = path.join('/') || '/';
-    const targetUrl = `http://${hostIP}:${targetPort}${pathString}${request.nextUrl.search}`;
+    const targetUrl = `http://${containerIP}:80${pathString}${request.nextUrl.search}`;
+    
+    console.log('Proxying to:', targetUrl);
     
     // Proxy the request
     const response = await fetch(targetUrl, {
       method: request.method,
       headers: {
         ...Object.fromEntries(request.headers.entries()),
-        host: `${hostIP}:${targetPort}`,
+        host: `${containerIP}:80`,
       },
       body: request.body,
       // @ts-ignore
