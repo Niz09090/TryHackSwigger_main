@@ -255,9 +255,9 @@ export async function getContainerStatus(containerId: string): Promise<Container
     const labels = containerInfo.Config.Labels || {};
     const expiresAt = labels['expires-at'] ? new Date(labels['expires-at']) : new Date(Date.now() + LAB_TIMEOUT_MS);
     
-    // Get network info
+    // Get network info - use container's internal IP on Docker network
     const networkSettings = containerInfo.NetworkSettings.Networks[LAB_NETWORK];
-    const ip = '192.168.0.4';
+    const ip = networkSettings?.IPAddress || 'unknown';
     
     // Get host port from port mappings
     const ports = containerInfo.NetworkSettings.Ports;
