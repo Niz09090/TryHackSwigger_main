@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { deployContainer } from '@/lib/docker';
 import { mockLabs } from '@/lib/mockData';
+import Docker from 'dockerode';
+
+const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,6 +30,27 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Found lab:', lab.title, 'with dockerImage:', lab.dockerImage);
+
+    // Clean up old containers for this lab and user
+    try {
+      const containers = await docker.listContainers({ all: true });
+      for (const container of containers) {
+        const containerName = container.Names[0]?.replace(/^\//, '');
+        if (containerName && containerName.includes(`lab-${labId}-${userId}`)) {
+          console.log('Removing old container:', containerName);
+          const containerObj = docker.getContainer(container.Id);
+          try {
+            await containerObj.stop();
+          } catch (e) {
+            // Container might already be stopped
+          }
+          await containerObj.remove();
+        }
+      }
+    } catch (cleanupError) {
+      console.error('Error during container cleanup:', cleanupError);
+      // Continue with deployment even if cleanup fails
+    }
 
     // Deploy the container
     const containerInfo = await deployContainer({

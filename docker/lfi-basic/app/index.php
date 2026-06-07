@@ -178,7 +178,7 @@ if (in_array($page, $allowed_pages)) {
             
             <?php if (strpos($content, 'flag') !== false || strpos($content, 'hackforge') !== false): ?>
                 <div class="flag">
-                    🏆 Flag found: flag{lf1_b4s1c_p4th_trav3rsal}
+                    🏆 Flag found: hackforge{lfi_file_reader_flag}
                 </div>
             <?php endif; ?>
         </div>

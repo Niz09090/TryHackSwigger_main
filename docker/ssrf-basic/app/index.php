@@ -32,7 +32,7 @@ if ($url) {
             $result = "HTTP $httpCode: " . htmlspecialchars(substr($response, 0, 1000));
             
             if (strpos($response, 'flag') !== false || strpos($response, 'hackforge') !== false) {
-                $result .= " - Flag: flag{ssrf_b4s1c_s3rv3r_s1d3}";
+                $result .= " - Flag: hackforge{ssrf_flag_found}";
             }
         } else {
             $error = 'Failed to fetch URL';

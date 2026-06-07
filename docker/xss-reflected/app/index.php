@@ -183,7 +183,7 @@ if ($search) {
     
     <script>
         // Set flag in cookie for XSS exploitation
-        document.cookie = "flag=flag{xss_r3fl3ct3d_b4sic}; path=/";
+        document.cookie = "flag=hackforge{xss_reflected_flag_found}; path=/";
         document.cookie = "admin_session=guest; path=/";
     </script>
 </body>

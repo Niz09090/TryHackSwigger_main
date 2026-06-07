@@ -165,7 +165,7 @@ if ($host) {
                 
                 <?php if (strpos($result, 'flag') !== false || strpos($result, 'hackforge') !== false): ?>
                     <div class="flag">
-                        🏆 Flag found: flag{cmd_1nj3ct10n_b4s1c}
+                        🏆 Flag found: hackforge{cmd_injection_flag}
                     </div>
                 <?php endif; ?>
             <?php endif; ?>

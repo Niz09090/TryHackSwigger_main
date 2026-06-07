@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Display flag if user is admin or SQL injection detected
             if ($user['role'] === 'admin' || $num_rows > 1) {
-                $success .= "<br><br><strong>🎉 FLAG: flag{sql_injection_b4sic_bypas5}</strong>";
+                $success .= "<br><br><strong>🎉 FLAG: hackforge{sqli_1_union_select_rocks}</strong>";
             }
         } else {
             $error = 'Invalid credentials';

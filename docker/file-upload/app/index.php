@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                 // Check if uploaded file is a PHP shell (exploitation detected)
                 if (preg_match('/\.php5|\.phtml|\.phar/i', $filename) || 
                     (file_exists($fileDestination) && filesize($fileDestination) > 0)) {
-                    $message .= " - Flag: flag{f1l3_upl04d_b4s1c}";
+                    $message .= " - Flag: hackforge{file_upload_flag_found}";
                 }
             } else {
                 $error = "Failed to upload file";

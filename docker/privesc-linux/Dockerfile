@@ -35,7 +35,7 @@ RUN chmod 666 /etc/passwd
 RUN echo 'hackforge ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 
 # Create flag in /root
-RUN echo 'flag{pr1v3sc_l1nux_b4s1c}' > /root/flag.txt
+RUN echo 'hackforge{privesc_linux_root_flag}' > /root/flag.txt
 RUN chmod 600 /root/flag.txt
 
 # Add decoy flags to mislead

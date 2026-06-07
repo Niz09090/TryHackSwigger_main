@@ -76,7 +76,7 @@ if (isset($_GET['token'])) {
     $decoded = verifyJWT($token);
     
     if ($decoded && $decoded['role'] === 'admin') {
-        $success = "Admin access granted! Flag: flag{jwt_byp4ss_b4s1c}";
+        $success = "Admin access granted! Flag: hackforge{jwt_bypass_flag}";
     } else if ($decoded && $decoded['role'] === 'user') {
         $error = 'Access denied: User role does not have admin privileges';
     } else {
