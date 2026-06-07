@@ -1,11 +1,16 @@
 import Docker from 'dockerode';
 import os from 'os';
 
-const docker = new Docker(
-  os.platform() === 'win32'
-    ? { socketPath: '//./pipe/docker_engine' }
-    : { socketPath: '/var/run/docker.sock' }
-);
+const docker = new Docker({ socketPath: '/var/run/docker.sock' });
+
+// Test Docker connection on startup
+docker.ping((err) => {
+  if (err) {
+    console.error('Docker connection failed:', err);
+  } else {
+    console.log('Docker connection successful');
+  }
+});
 
 const LAB_NETWORK = 'hackforge-network';
 const LAB_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 hours
@@ -18,14 +23,20 @@ async function pullImageIfNeeded(imageName: string): Promise<void> {
     await docker.getImage(imageName).inspect();
     console.log(`Image ${imageName} already exists locally, skipping pull`);
     return;
-  } catch {
+  } catch (err) {
     // Image doesn't exist locally, try to pull
     console.log(`Pulling image ${imageName}...`);
     return new Promise((resolve, reject) => {
-      docker.pull(imageName, (err: Error | null, stream: NodeJS.ReadableStream) => {
-        if (err) return reject(err);
+      docker.pull(imageName, (error: Error | null, stream: NodeJS.ReadableStream) => {
+        if (error) {
+          console.error('Error pulling image:', error);
+          return reject(error);
+        }
         docker.modem.followProgress(stream, (err: Error | null) => {
-          if (err) return reject(err);
+          if (err) {
+            console.error('Error following pull progress:', err);
+            return reject(err);
+          }
           resolve();
         });
       });
@@ -60,6 +71,7 @@ export interface ContainerStatus {
 // Ensure the lab network exists
 export async function ensureLabNetwork(): Promise<void> {
   try {
+    console.log('Ensuring lab network exists:', LAB_NETWORK);
     const networks = await docker.listNetworks();
     const networkExists = networks.some(n => n.Name === LAB_NETWORK);
     
@@ -73,6 +85,7 @@ export async function ensureLabNetwork(): Promise<void> {
     }
   } catch (error) {
     console.error('Error ensuring lab network:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
     throw new Error('Failed to ensure lab network exists');
   }
 }
@@ -80,6 +93,7 @@ export async function ensureLabNetwork(): Promise<void> {
 // Deploy a new container for a lab
 export async function deployContainer(config: ContainerConfig): Promise<ContainerInfo> {
   try {
+    console.log('Deploying container for lab:', config.labId);
     await ensureLabNetwork();
     
     // Pull the image only if it doesn't exist locally
@@ -144,6 +158,7 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
     };
   } catch (error) {
     console.error('Error deploying container:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
     throw new Error('Failed to deploy container');
   }
 }
