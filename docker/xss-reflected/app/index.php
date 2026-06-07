@@ -2,13 +2,15 @@
 $search = $_GET['q'] ?? '';
 $results = [];
 $isAdmin = false;
+$hasXSS = false;
 
-// Basic client-side filtering (can be bypassed)
+// VULNERABLE: No filtering at all - direct reflection
 if ($search) {
-    // Filter obvious XSS patterns
-    $filteredSearch = str_replace(['<script', '</script>', 'javascript:', 'onerror', 'onload'], '', $search);
+    // Check if input contains script tag (XSS detection)
+    if (stripos($search, '<script') !== false || stripos($search, 'javascript:') !== false) {
+        $hasXSS = true;
+    }
     
-    // VULNERABLE: Still vulnerable after filtering
     $results = [
         "Found 3 documents matching your query",
         "Document 1: Technical documentation about web security",
@@ -151,7 +153,7 @@ if ($search) {
     
     <div class="search-container">
         <form class="search-box" method="GET">
-            <input type="text" name="q" placeholder="Search the web..." value="<?php echo htmlspecialchars($search); ?>">
+            <input type="text" name="q" placeholder="Search the web..." value="<?php echo $search; ?>">
             <button type="submit">Search</button>
         </form>
         
@@ -165,10 +167,10 @@ if ($search) {
                 <?php endforeach; ?>
             </div>
             
-            <?php if ($isAdmin): ?>
+            <?php if ($hasXSS): ?>
                 <div class="admin-panel">
-                    <h2>🔓 Admin Panel</h2>
-                    <p>You have successfully authenticated as administrator.</p>
+                    <h2>🔓 XSS Detected!</h2>
+                    <p>Your payload was executed successfully.</p>
                     <div class="flag">
                         🏆 Flag: hackforge{xss_reflected_flag_found}
                     </div>
@@ -180,11 +182,5 @@ if ($search) {
     <div class="footer">
         <a href="hint.php">Need help with this lab?</a>
     </div>
-    
-    <script>
-        // Set flag in cookie for XSS exploitation
-        document.cookie = "flag=hackforge{xss_reflected_flag_found}; path=/";
-        document.cookie = "admin_session=guest; path=/";
-    </script>
 </body>
 </html>
