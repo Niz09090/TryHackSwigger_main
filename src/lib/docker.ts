@@ -1,5 +1,6 @@
 import Docker from 'dockerode';
 import os from 'os';
+import path from 'path';
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
@@ -17,27 +18,58 @@ const LAB_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 hours
 const MEMORY_LIMIT = 512 * 1024 * 1024; // 512MB
 const CPU_LIMIT = 0.5;
 
-// Pull image only if it doesn't exist locally
-async function pullImageIfNeeded(imageName: string): Promise<void> {
+// Lab ID to Dockerfile path mapping
+const LAB_DOCKERFILE_MAP: { [key: string]: string } = {
+  '1': 'docker/idor-basic',
+  '2': 'docker/sqli-basic',
+  '3': 'docker/xss-reflected',
+  '4': 'docker/csrf-bypass',
+  '5': 'docker/lfi-basic',
+  '6': 'docker/cmd-injection',
+  '7': 'docker/file-upload',
+  '8': 'docker/xxe-injection',
+  '9': 'docker/ssrf-basic',
+  '10': 'docker/jwt-bypass',
+  '11': 'docker/privesc-linux',
+  '12': 'docker/bof-basic'
+};
+
+// Build image from local Dockerfile if it doesn't exist
+async function buildImageIfNeeded(labId: string): Promise<string> {
+  const dockerfilePath = LAB_DOCKERFILE_MAP[labId];
+  if (!dockerfilePath) {
+    throw new Error(`No Dockerfile found for lab ID: ${labId}`);
+  }
+
+  const imageName = `hackforge/${dockerfilePath.split('/').pop()}:latest`;
+  
   try {
     await docker.getImage(imageName).inspect();
-    console.log(`Image ${imageName} already exists locally, skipping pull`);
-    return;
+    console.log(`Image ${imageName} already exists locally, skipping build`);
+    return imageName;
   } catch (err) {
-    // Image doesn't exist locally, try to pull
-    console.log(`Pulling image ${imageName}...`);
+    // Image doesn't exist locally, build it
+    console.log(`Building image ${imageName} from ${dockerfilePath}...`);
+    
+    const buildContext = path.resolve(process.cwd(), dockerfilePath);
+    
     return new Promise((resolve, reject) => {
-      docker.pull(imageName, (error: Error | null, stream: NodeJS.ReadableStream) => {
+      docker.buildImage({
+        context: buildContext,
+        src: ['.']
+      }, { t: imageName }, (error: Error | null, stream: NodeJS.ReadableStream) => {
         if (error) {
-          console.error('Error pulling image:', error);
+          console.error('Error building image:', error);
           return reject(error);
         }
+        
         docker.modem.followProgress(stream, (err: Error | null) => {
           if (err) {
-            console.error('Error following pull progress:', err);
+            console.error('Error following build progress:', err);
             return reject(err);
           }
-          resolve();
+          console.log(`Successfully built image ${imageName}`);
+          resolve(imageName);
         });
       });
     });
@@ -96,8 +128,8 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
     console.log('Deploying container for lab:', config.labId);
     await ensureLabNetwork();
     
-    // Pull the image only if it doesn't exist locally
-    await pullImageIfNeeded(config.dockerImage);
+    // Build the image from local Dockerfile if it doesn't exist
+    const imageName = await buildImageIfNeeded(config.labId);
     
     // Generate a unique container name
     const containerName = `lab-${config.labId}-${config.userId}-${Date.now()}`;
@@ -119,7 +151,7 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
     // Create and start the container
     const container = await docker.createContainer({
       name: containerName,
-      Image: config.dockerImage,
+      Image: imageName,
       ExposedPorts: exposedPorts,
       HostConfig: {
         Memory: MEMORY_LIMIT,
@@ -245,6 +277,7 @@ export async function getContainerStatus(containerId: string): Promise<Container
 // Reset a container (terminate and deploy fresh)
 export async function resetContainer(config: ContainerConfig, oldContainerId: string): Promise<ContainerInfo> {
   try {
+    console.log('Resetting container for lab:', config.labId);
     // Terminate old container
     await terminateContainer(oldContainerId);
     
@@ -252,6 +285,7 @@ export async function resetContainer(config: ContainerConfig, oldContainerId: st
     return await deployContainer(config);
   } catch (error) {
     console.error('Error resetting container:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
     throw new Error('Failed to reset container');
   }
 }
