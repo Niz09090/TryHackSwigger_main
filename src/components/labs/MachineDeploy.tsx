@@ -75,7 +75,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
 
     const pollInterval = setInterval(async () => {
       try {
-        const response = await fetch(`/api/labs/status/${containerInfo.containerId}`);
+        const response = await fetch(`/api/labs/container-status/${containerInfo.containerId}`);
         const status: ContainerStatus = await response.json();
         setContainerStatus(status);
         
@@ -114,7 +114,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
       setContainerInfo(info);
       
       // Get initial status
-      const statusResponse = await fetch(`/api/labs/status/${info.containerId}`);
+      const statusResponse = await fetch(`/api/labs/container-status/${info.containerId}`);
       const status: ContainerStatus = await statusResponse.json();
       setContainerStatus(status);
     } catch (err) {
@@ -177,7 +177,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
       setContainerInfo(info);
       
       // Get initial status
-      const statusResponse = await fetch(`/api/labs/status/${info.containerId}`);
+      const statusResponse = await fetch(`/api/labs/container-status/${info.containerId}`);
       const status: ContainerStatus = await statusResponse.json();
       setContainerStatus(status);
     } catch (err) {
