@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_BASE_URL=https://lenses-reporting-somewhere-thought.trycloudflare.com
+        - NEXT_PUBLIC_BASE_URL=https://enlarging-class-unmasking.ngrok-free.dev
     ports:
       - "3004:3000"
     environment:
