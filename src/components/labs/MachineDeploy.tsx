@@ -42,7 +42,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
       if (!user) return;
       
       try {
-        const response = await fetch(`/api/labs/status/${labId}`);
+        const response = await fetch(`/api/labs/lab-status/${labId}`);
         const data = await response.json();
         
         if (data.running) {
