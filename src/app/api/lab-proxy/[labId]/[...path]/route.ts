@@ -108,12 +108,13 @@ async function handleProxy(
     
     console.log('Proxying to:', targetUrl);
     
-    // Proxy the request
+    // Proxy the request with uncompressed response
     const response = await fetch(targetUrl, {
       method: request.method,
       headers: {
         ...Object.fromEntries(request.headers.entries()),
         host: `${containerIP}:80`,
+        'Accept-Encoding': 'identity',
       },
       body: request.body,
       // @ts-ignore
@@ -125,10 +126,20 @@ async function handleProxy(
     // Return the response
     const responseBody = await response.arrayBuffer();
     
+    // Filter out problematic headers
+    const responseHeaders = new Headers();
+    response.headers.forEach((value, key) => {
+      if (key.toLowerCase() !== 'content-encoding' && 
+          key.toLowerCase() !== 'transfer-encoding' &&
+          key.toLowerCase() !== 'content-length') {
+        responseHeaders.set(key, value);
+      }
+    });
+    
     return new NextResponse(responseBody, {
       status: response.status,
       headers: {
-        ...Object.fromEntries(response.headers.entries()),
+        ...Object.fromEntries(responseHeaders.entries()),
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
         'Access-Control-Allow-Headers': '*',
