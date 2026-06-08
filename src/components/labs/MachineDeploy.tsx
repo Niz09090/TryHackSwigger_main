@@ -36,6 +36,39 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Check for existing container on mount
+  useEffect(() => {
+    const checkExistingContainer = async () => {
+      if (!user) return;
+      
+      try {
+        const response = await fetch(`/api/labs/status/${labId}`);
+        const data = await response.json();
+        
+        if (data.running) {
+          setContainerInfo({
+            containerId: data.containerId,
+            ip: data.containerIP || 'unknown',
+            port: 80,
+            expiresAt: data.expiresAt,
+            terminalPort: terminalEnabled ? 7681 : undefined,
+          });
+          setContainerStatus({
+            status: 'running',
+            timeRemaining: data.timeRemaining,
+            ip: data.containerIP || 'unknown',
+            port: 80,
+            terminalPort: terminalEnabled ? 7681 : undefined,
+          });
+        }
+      } catch (err) {
+        console.error('Error checking existing container:', err);
+      }
+    };
+    
+    checkExistingContainer();
+  }, [labId, user, terminalEnabled]);
+
   // Poll container status every 30 seconds
   useEffect(() => {
     if (!containerInfo) return;
