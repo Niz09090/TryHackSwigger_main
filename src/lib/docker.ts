@@ -1,9 +1,11 @@
 import Docker from 'dockerode';
-import os from 'os';
 import path from 'path';
 
-const docker = new Docker({ socketPath: '/var/run/docker.sock' });
-
+const docker = new Docker(
+  process.platform === 'win32'
+    ? { socketPath: '//./pipe/docker_engine' }
+    : { socketPath: '/var/run/docker.sock' }
+);
 // Test Docker connection on startup
 docker.ping((err) => {
   if (err) {
