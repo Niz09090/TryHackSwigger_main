@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Play, X, RefreshCw, Terminal, Clock, Server, AlertCircle } from 'lucide-react';
+import { Play, X, RefreshCw, Terminal, Clock, Server, AlertCircle, ExternalLink } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface MachineDeployProps {
@@ -240,6 +240,34 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
                 <div className="text-white font-mono text-sm">{containerStatus.port}</div>
               </div>
             </div>
+
+            {containerStatus.status === 'running' && (
+              <div className="p-3 bg-deep-black rounded-lg flex items-center">
+                <div className="flex-1">
+                  <div className="text-gray-400 text-xs mb-1">Access URL</div>
+                  <a
+                    href={`http://localhost:3000/api/lab-proxy/${labId}/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-neon-cyan hover:text-neon-green font-mono text-sm flex items-center transition-colors"
+                  >
+                    http://localhost:3000/api/lab-proxy/{labId}/
+                    <ExternalLink className="h-3 w-3 ml-2" />
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {containerStatus.status !== 'running' && (
+              <div className="p-3 bg-deep-black rounded-lg flex items-center opacity-50">
+                <div className="flex-1">
+                  <div className="text-gray-400 text-xs mb-1">Access URL</div>
+                  <div className="text-gray-500 font-mono text-sm">
+                    http://localhost:3000/api/lab-proxy/{labId}/
+                  </div>
+                </div>
+              </div>
+            )}
 
             {containerStatus.status === 'running' && (
               <div className="p-3 bg-deep-black rounded-lg flex items-center">
