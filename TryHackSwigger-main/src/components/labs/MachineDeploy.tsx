@@ -249,10 +249,9 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
                     href={`http://localhost:3000/api/lab-proxy/${labId}/`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-neon-cyan hover:text-neon-green font-mono text-sm flex items-center transition-colors"
+                    style={{ color: '#6366f1', textDecoration: 'underline', cursor: 'pointer' }}
                   >
                     http://localhost:3000/api/lab-proxy/{labId}/
-                    <ExternalLink className="h-3 w-3 ml-2" />
                   </a>
                 </div>
               </div>
