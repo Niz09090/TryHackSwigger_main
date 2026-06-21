@@ -1,4 +1,5 @@
 import Docker from 'dockerode';
+import fs from 'fs';
 import path from 'path';
 
 const docker = new Docker(
@@ -15,8 +16,68 @@ docker.ping((err) => {
   }
 });
 
-const LAB_NETWORK = 'hackforge-network';
+export const LAB_NETWORK = 'hackforge-network';
 const LAB_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 hours
+
+/** True when this Node process is running inside a Docker container. */
+export function isRunningInDockerContainer(): boolean {
+  try {
+    return fs.existsSync('/.dockerenv');
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Resolve the host-published port for a container port (default 80).
+ * Checks NetworkSettings.Ports first, then Docker Desktop port labels.
+ */
+export function getMappedHostPort(
+  containerDetails: Docker.ContainerInspectInfo,
+  containerPort = 80
+): number | null {
+  const portKey = `${containerPort}/tcp`;
+  const hostPort = containerDetails.NetworkSettings?.Ports?.[portKey]?.[0]?.HostPort;
+  if (hostPort) {
+    return parseInt(hostPort, 10);
+  }
+
+  const labelKey = `desktop.docker.io/ports/${containerPort}/tcp`;
+  const labelValue = containerDetails.Config?.Labels?.[labelKey];
+  if (labelValue) {
+    const match = labelValue.match(/:(\d+)$/);
+    if (match) {
+      return parseInt(match[1], 10);
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Build the base URL for proxying to a lab container.
+ * Uses localhost + mapped host port when running on the host; uses the
+ * container's bridge-network IP when this app runs inside Docker.
+ */
+export function getLabProxyBaseUrl(
+  containerDetails: Docker.ContainerInspectInfo,
+  containerPort = 80
+): string | null {
+  if (isRunningInDockerContainer()) {
+    const containerIP =
+      containerDetails.NetworkSettings?.Networks?.[LAB_NETWORK]?.IPAddress;
+    if (containerIP) {
+      return `http://${containerIP}:${containerPort}`;
+    }
+  }
+
+  const hostPort = getMappedHostPort(containerDetails, containerPort);
+  if (hostPort) {
+    return `http://localhost:${hostPort}`;
+  }
+
+  return null;
+}
 const MEMORY_LIMIT = 512 * 1024 * 1024; // 512MB
 const CPU_LIMIT = 0.5;
 

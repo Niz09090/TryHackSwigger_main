@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Docker from 'dockerode';
 import os from 'os';
+import { getLabProxyBaseUrl } from '@/lib/docker';
 
 const docker = new Docker(
   os.platform() === 'win32'
@@ -8,7 +9,6 @@ const docker = new Docker(
     : { socketPath: '/var/run/docker.sock' }
 );
 
-const LAB_NETWORK = 'hackforge-network';
 
 export async function GET(
   request: NextRequest,
@@ -85,33 +85,30 @@ async function handleProxy(
     
     const container = docker.getContainer(containerInfo.Id);
     const containerDetails = await container.inspect();
-    
-    // Get the container's internal IP on the Docker network
-    const networkSettings = containerDetails.NetworkSettings.Networks[LAB_NETWORK];
-    if (!networkSettings) {
-      console.log('Container not connected to hackforge-network');
-      console.log('Available networks:', Object.keys(containerDetails.NetworkSettings.Networks));
+
+    const proxyBaseUrl = getLabProxyBaseUrl(containerDetails);
+    if (!proxyBaseUrl) {
+      console.log('No proxy target available for container');
       return NextResponse.json(
-        { error: 'Container not connected to lab network' },
+        { error: 'No host port mapping found for lab container' },
         { status: 500 }
       );
     }
-    
-    const containerIP = networkSettings.IPAddress;
-    console.log('Container IP on hackforge-network:', containerIP);
-    
-    // Build the target URL using container internal IP and port 80
-    const pathString = path.join('/') || '/';
-    const targetUrl = `http://${containerIP}:80${pathString}${request.nextUrl.search}`;
-    
+
+    console.log('Proxy base URL:', proxyBaseUrl);
+
+    const pathString = path.length > 0 ? `/${path.join('/')}` : '/';
+    const targetUrl = `${proxyBaseUrl}${pathString}${request.nextUrl.search}`;
+
     console.log('Proxying to:', targetUrl);
-    
-    // Proxy the request with uncompressed response
+
+    const proxyHost = new URL(proxyBaseUrl).host;
+
     const response = await fetch(targetUrl, {
       method: request.method,
       headers: {
         ...Object.fromEntries(request.headers.entries()),
-        host: `${containerIP}:80`,
+        host: proxyHost,
         'Accept-Encoding': 'identity',
       },
       body: request.body,
