@@ -80,6 +80,13 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
       const info: ContainerInfo = await response.json();
       setContainerInfo(info);
       
+      // Store lab-container mapping for proxy
+      await fetch(`/api/lab-proxy/${labId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ containerId: info.containerId })
+      });
+      
       // Get initial status
       const statusResponse = await fetch(`/api/labs/status/${info.containerId}`);
       const status: ContainerStatus = await statusResponse.json();
@@ -245,14 +252,22 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
               <div className="p-3 bg-deep-black rounded-lg flex items-center">
                 <div className="flex-1">
                   <div className="text-gray-400 text-xs mb-1">Access URL</div>
-                  <a
-                    href={`http://localhost:3000/api/lab-proxy/${labId}/`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: '#6366f1', textDecoration: 'underline', cursor: 'pointer' }}
-                  >
-                    http://localhost:3000/api/lab-proxy/{labId}/
-                  </a>
+                  {(() => {
+                    const accessUrl = `http://localhost:3000/api/lab-proxy/${labId}/`;
+                    console.log('accessUrl value:', accessUrl);
+                    console.log('labId value:', labId);
+                    console.log('containerStatus.status:', containerStatus.status);
+                    return (
+                      <a
+                        href={accessUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: '#6366f1', textDecoration: 'underline', cursor: 'pointer' }}
+                      >
+                        {accessUrl}
+                      </a>
+                    );
+                  })()}
                 </div>
               </div>
             )}
