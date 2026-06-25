@@ -2,7 +2,7 @@
 const nextConfig = {
   output: 'standalone',
   images: {
-    domains: ['enlarging-class-unmasking.ngrok-free.dev', 'tryhackswigger.ddns.net', 'localhost'],
+    domains: ['localhost'],
   },
   webpack: (config) => {
     config.externals = [...(config.externals || []), 'cpu-features', 'sshcrypto'];
