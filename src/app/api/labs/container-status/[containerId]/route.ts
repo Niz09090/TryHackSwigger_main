@@ -15,6 +15,17 @@ export async function GET(
       );
     }
 
+    // Handle BLUE_TEAM labs without Docker calls
+    if (containerId.startsWith('blue-')) {
+      return NextResponse.json({
+        status: 'running',
+        timeRemaining: 1000 * 60 * 60 * 4,
+        ip: 'localhost',
+        port: 0,
+        isBlueTeam: true
+      });
+    }
+
     const status = await getContainerStatus(containerId);
 
     return NextResponse.json(status);

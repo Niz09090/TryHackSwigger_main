@@ -21,7 +21,8 @@ import {
   BlueLab,
   BlueLabCategory,
   LabType,
-  BlueModule
+  BlueModule,
+  LabTeamType
 } from './types';
 
 // Mock Users
@@ -490,6 +491,466 @@ export const mockLabs: Lab[] = [
     dockerImage: 'hackforge/bof-basic:latest',
     terminalEnabled: true,
     ports: [7681]
+  },
+  {
+    id: '13',
+    slug: 'log-analysis-sqli-attack',
+    title: 'Log Analysis: SQL Injection Attack',
+    description: 'Analyze web server logs to identify and investigate a SQL injection attack.',
+    category: LabCategory.FORENSICS,
+    difficulty: Difficulty.MEDIUM,
+    points: 250,
+    estimatedTime: 60,
+    learningObjectives: [
+      'Analyze web server access logs',
+      'Identify SQL injection patterns',
+      'Extract attacker IP addresses',
+      'Determine attack vectors'
+    ],
+    prerequisites: ['Basic log analysis knowledge'],
+    flag: 'hackforge{log_analysis_sqli_detected}',
+    hints: [
+      { text: 'Look for unusual patterns in the access logs', cost: 15 },
+      { text: 'SQL injection often contains UNION or OR statements', cost: 20 },
+      { text: 'Check for repeated requests from the same IP', cost: 25 }
+    ],
+    solution: 'The attacker IP is 192.168.1.100. They used UNION-based SQL injection to extract user data.',
+    completedBy: 89,
+    rating: 4.4,
+    completions: 89,
+    createdAt: '2024-03-20T10:00:00Z',
+    dockerImage: 'hackforge/sqli-basic:latest',
+    terminalEnabled: false,
+    ports: [80],
+    type: LabTeamType.BLUE_TEAM,
+    incidentScenario: 'Your organization\'s web application has been experiencing unusual traffic patterns. The security team has detected potential SQL injection attempts in the web server logs. As a Blue Team analyst, you need to analyze the access logs to identify the attacker\'s IP address, determine the attack vector, and understand what data was being targeted.',
+    investigativeQuestions: [
+      {
+        id: 'q1',
+        question: 'What is the attacker\'s IP address?',
+        flag: '192.168.1.100',
+        hint: 'Look for IP addresses with suspicious request patterns'
+      },
+      {
+        id: 'q2',
+        question: 'What type of SQL injection technique was used?',
+        flag: 'UNION-based',
+        hint: 'The attacker used a specific SQL keyword to combine results'
+      },
+      {
+        id: 'q3',
+        question: 'What table was the attacker trying to access?',
+        flag: 'users',
+        hint: 'Look for table names in the injected SQL payload'
+      }
+    ]
+  },
+  {
+    id: '14',
+    slug: 'ssh-brute-force-analysis',
+    title: 'SSH Brute Force Log Analysis',
+    description: 'Analyze SSH authentication logs to identify a brute force attack and determine the attacker\'s methods.',
+    category: LabCategory.FORENSICS,
+    difficulty: Difficulty.EASY,
+    points: 200,
+    estimatedTime: 45,
+    learningObjectives: [
+      'Analyze SSH auth logs',
+      'Identify brute force patterns',
+      'Extract attacker IP and username targets',
+      'Determine attack timeline'
+    ],
+    prerequisites: ['Basic Linux log analysis'],
+    flag: 'hackforge{ssh_brute_force_detected}',
+    hints: [
+      { text: 'Look for repeated failed authentication attempts', cost: 10 },
+      { text: 'Check /var/log/auth.log or /var/log/secure', cost: 15 },
+      { text: 'Count failed attempts per IP address', cost: 20 }
+    ],
+    solution: 'Attacker IP 10.0.0.55 performed 847 failed SSH attempts targeting root and admin users.',
+    completedBy: 0,
+    rating: 0,
+    completions: 0,
+    createdAt: '2024-03-25T10:00:00Z',
+    dockerImage: 'hackforge/sqli-basic:latest',
+    terminalEnabled: false,
+    ports: [80],
+    type: LabTeamType.BLUE_TEAM,
+    incidentScenario: 'Your organization\'s SSH server has been receiving an unusually high volume of failed authentication attempts. The SOC team has flagged this as a potential brute force attack. As a security analyst, you need to analyze the SSH authentication logs to identify the source IP, determine which usernames were targeted, and assess the scale of the attack.',
+    investigativeQuestions: [
+      {
+        id: 'q1',
+        question: 'What is the attacker\'s IP address?',
+        flag: '10.0.0.55',
+        hint: 'Look for the IP with the most failed authentication attempts'
+      },
+      {
+        id: 'q2',
+        question: 'How many failed login attempts were made?',
+        flag: '847',
+        hint: 'Count the total number of "Failed password" entries'
+      },
+      {
+        id: 'q3',
+        question: 'Which username was targeted most frequently?',
+        flag: 'root',
+        hint: 'Check which account appears most often in failed attempts'
+      }
+    ]
+  },
+  {
+    id: '15',
+    slug: 'web-shell-investigation',
+    title: 'Web Shell Upload Investigation',
+    description: 'Investigate nginx and PHP logs to detect and analyze a web shell upload attack.',
+    category: LabCategory.FORENSICS,
+    difficulty: Difficulty.MEDIUM,
+    points: 300,
+    estimatedTime: 75,
+    learningObjectives: [
+      'Analyze nginx access and error logs',
+      'Identify web shell upload patterns',
+      'Detect PHP backdoor execution',
+      'Trace attacker post-exploitation activity'
+    ],
+    prerequisites: ['Web server log analysis', 'PHP basics'],
+    flag: 'hackforge{web_shell_detected}',
+    hints: [
+      { text: 'Look for unusual file upload requests', cost: 15 },
+      { text: 'Check for POST requests to upload endpoints', cost: 20 },
+      { text: 'Search for suspicious PHP file accesses after upload', cost: 25 }
+    ],
+    solution: 'Attacker uploaded shell.php via /upload endpoint, then executed it to run system commands.',
+    completedBy: 0,
+    rating: 0,
+    completions: 0,
+    createdAt: '2024-03-26T10:00:00Z',
+    dockerImage: 'hackforge/file-upload:latest',
+    terminalEnabled: false,
+    ports: [80],
+    type: LabTeamType.BLUE_TEAM,
+    incidentScenario: 'Your web application\'s file upload functionality has been exploited. The security team suspects a web shell was uploaded and is being used for remote command execution. You need to analyze the nginx access logs and PHP error logs to identify the uploaded file, determine when it was uploaded, and trace the attacker\'s subsequent activities.',
+    investigativeQuestions: [
+      {
+        id: 'q1',
+        question: 'What is the name of the uploaded web shell file?',
+        flag: 'shell.php',
+        hint: 'Look for POST requests to upload endpoints with .php extensions'
+      },
+      {
+        id: 'q2',
+        question: 'What endpoint was used to upload the file?',
+        flag: '/upload',
+        hint: 'Check the URL path in the upload POST request'
+      },
+      {
+        id: 'q3',
+        question: 'What system command did the attacker execute first?',
+        flag: 'whoami',
+        hint: 'Look for GET requests with command parameters in the web shell URL'
+      },
+      {
+        id: 'q4',
+        question: 'What was the attacker\'s source IP address?',
+        flag: '203.0.113.42',
+        hint: 'Find the IP that made both the upload and subsequent web shell requests'
+      }
+    ]
+  },
+  {
+    id: '16',
+    slug: 'ransomware-ioc-hunting',
+    title: 'Ransomware IOC Hunting',
+    description: 'Hunt for Indicators of Compromise in Windows Event Logs during a ransomware incident.',
+    category: LabCategory.FORENSICS,
+    difficulty: Difficulty.HARD,
+    points: 400,
+    estimatedTime: 120,
+    learningObjectives: [
+      'Analyze Windows Event Logs',
+      'Identify ransomware IOCs',
+      'Detect suspicious process execution',
+      'Track file encryption activities'
+    ],
+    prerequisites: ['Windows Event Log analysis', 'Malware analysis basics'],
+    flag: 'hackforge{ransomware_iocs_found}',
+    hints: [
+      { text: 'Check Security Event Log for process creation', cost: 20 },
+      { text: 'Look for unusual PowerShell execution', cost: 25 },
+      { text: 'Search for mass file modification events', cost: 30 }
+    ],
+    solution: 'Ransomware executed via PowerShell, encrypted .docx files, and dropped ransom note.',
+    completedBy: 0,
+    rating: 0,
+    completions: 0,
+    createdAt: '2024-03-27T10:00:00Z',
+    dockerImage: 'hackforge/cmd-injection:latest',
+    terminalEnabled: false,
+    ports: [80],
+    type: LabTeamType.BLUE_TEAM,
+    incidentScenario: 'A workstation in your organization has been infected with ransomware. The user reported files being encrypted and a ransom note appearing. You need to analyze the Windows Event Logs to identify the initial infection vector, determine what processes were executed, and find indicators of compromise that can help contain the spread and prevent future infections.',
+    investigativeQuestions: [
+      {
+        id: 'q1',
+        question: 'What was the name of the malicious PowerShell script executed?',
+        flag: 'encrypt.ps1',
+        hint: 'Look for PowerShell process creation with suspicious script names'
+      },
+      {
+        id: 'q2',
+        question: 'What file extension was primarily targeted for encryption?',
+        flag: '.docx',
+        hint: 'Check for mass file modification events with specific extensions'
+      },
+      {
+        id: 'q3',
+        question: 'What was the name of the ransom note file dropped?',
+        flag: 'README_DECRYPT.txt',
+        hint: 'Look for file creation events with ransom-related names'
+      },
+      {
+        id: 'q4',
+        question: 'Which Event ID indicates the suspicious process execution?',
+        flag: '4688',
+        hint: 'Security Event Log uses Event ID 4688 for process creation'
+      }
+    ]
+  },
+  {
+    id: '17',
+    slug: 'lateral-movement-detection',
+    title: 'Lateral Movement Detection',
+    description: 'Detect lateral movement by analyzing failed login attempts across multiple systems.',
+    category: LabCategory.FORENSICS,
+    difficulty: Difficulty.MEDIUM,
+    points: 280,
+    estimatedTime: 60,
+    learningObjectives: [
+      'Analyze authentication logs across systems',
+      'Identify lateral movement patterns',
+      'Detect credential spraying attacks',
+      'Map attacker movement through network'
+    ],
+    prerequisites: ['Active Directory log analysis', 'Windows security basics'],
+    flag: 'hackforge{lateral_movement_detected}',
+    hints: [
+      { text: 'Look for failed logins from the same account across multiple hosts', cost: 15 },
+      { text: 'Check Event ID 4625 for failed logons', cost: 20 },
+      { text: 'Identify the source workstation of the attacker', cost: 25 }
+    ],
+    solution: 'Attacker compromised workstation WS-01, then attempted lateral movement to 5 other systems using svc_account.',
+    completedBy: 0,
+    rating: 0,
+    completions: 0,
+    createdAt: '2024-03-28T10:00:00Z',
+    dockerImage: 'hackforge/jwt-bypass:latest',
+    terminalEnabled: false,
+    ports: [80],
+    type: LabTeamType.BLUE_TEAM,
+    incidentScenario: 'Your security monitoring has detected suspicious failed login attempts across multiple systems in your network. This pattern suggests an attacker may be attempting lateral movement after compromising an initial system. You need to analyze the authentication logs from various systems to identify the source of the attack, determine which account is being used, and map the attacker\'s attempted movement through your network.',
+    investigativeQuestions: [
+      {
+        id: 'q1',
+        question: 'Which account is being used for lateral movement?',
+        flag: 'svc_account',
+        hint: 'Look for the same username appearing in failed logins across different hosts'
+      },
+      {
+        id: 'q2',
+        question: 'What is the hostname of the initially compromised workstation?',
+        flag: 'WS-01',
+        hint: 'Find the host where this account first had successful logins before failures elsewhere'
+      },
+      {
+        id: 'q3',
+        question: 'How many different systems were targeted for lateral movement?',
+        flag: '5',
+        hint: 'Count the unique target hostnames in the failed login attempts'
+      },
+      {
+        id: 'q4',
+        question: 'What is the source IP address of the attacker?',
+        flag: '192.168.10.50',
+        hint: 'Look for the external IP address in the initial compromise logs'
+      }
+    ]
+  },
+  {
+    id: '18',
+    slug: 'phishing-header-analysis',
+    title: 'Phishing Email Header Analysis',
+    description: 'Analyze email headers to trace the origin of a phishing campaign and identify spoofing techniques.',
+    category: LabCategory.FORENSICS,
+    difficulty: Difficulty.EASY,
+    points: 180,
+    estimatedTime: 40,
+    learningObjectives: [
+      'Parse email headers',
+      'Identify email spoofing',
+      'Trace email routing path',
+      'Detect phishing indicators'
+    ],
+    prerequisites: ['Email protocol basics', 'Header analysis'],
+    flag: 'hackforge{phishing_headers_analyzed}',
+    hints: [
+      { text: 'Check the Received headers to trace the email path', cost: 10 },
+      { text: 'Look for SPF/DKIM/DMARC authentication results', cost: 15 },
+      { text: 'Compare From header with actual sending server', cost: 20 }
+    ],
+    solution: 'Email was spoofed using compromised server, SPF failed, originated from malicious IP.',
+    completedBy: 0,
+    rating: 0,
+    completions: 0,
+    createdAt: '2024-03-29T10:00:00Z',
+    dockerImage: 'hackforge/csrf-bypass:latest',
+    terminalEnabled: false,
+    ports: [80],
+    type: LabTeamType.BLUE_TEAM,
+    incidentScenario: 'Your organization has received reports of a phishing email targeting employees. The email appears to come from your CEO requesting urgent wire transfers. You need to analyze the full email headers to determine if this is a legitimate email or a spoofed phishing attempt, trace the actual origin of the email, and identify technical indicators that can help block similar attacks.',
+    investigativeQuestions: [
+      {
+        id: 'q1',
+        question: 'What is the actual sending IP address of the email?',
+        flag: '185.220.101.10',
+        hint: 'Look at the bottom-most Received header for the true origin'
+      },
+      {
+        id: 'q2',
+        question: 'Did the SPF authentication pass or fail?',
+        flag: 'fail',
+        hint: 'Check the Authentication-Results header for SPF status'
+      },
+      {
+        id: 'q3',
+        question: 'What domain was spoofed in the From header?',
+        flag: 'yourcompany.com',
+        hint: 'Compare the From domain with the actual sending server domain'
+      },
+      {
+        id: 'q4',
+        question: 'What mail server was abused to send the email?',
+        flag: 'mail.victim-server.com',
+        hint: 'Look for the server name in the Received headers'
+      }
+    ]
+  },
+  {
+    id: '19',
+    slug: 'privilege-escalation-forensics',
+    title: 'Privilege Escalation Forensics',
+    description: 'Analyze Linux auditd logs to detect privilege escalation techniques and suspicious sudo activity.',
+    category: LabCategory.FORENSICS,
+    difficulty: Difficulty.HARD,
+    points: 350,
+    estimatedTime: 90,
+    learningObjectives: [
+      'Analyze Linux auditd logs',
+      'Detect privilege escalation attempts',
+      'Identify sudo abuse patterns',
+      'Track suspicious command execution'
+    ],
+    prerequisites: ['Linux system administration', 'Auditd log analysis'],
+    flag: 'hackforge{privilege_escalation_detected}',
+    hints: [
+      { text: 'Look for sudo commands in audit logs', cost: 20 },
+      { text: 'Check for execution of shell commands with elevated privileges', cost: 25 },
+      { text: 'Identify unusual user account activity', cost: 30 }
+    ],
+    solution: 'Attacker used sudo to run bash shell, then added backdoor user and modified sudoers.',
+    completedBy: 0,
+    rating: 0,
+    completions: 0,
+    createdAt: '2024-03-30T10:00:00Z',
+    dockerImage: 'hackforge/privesc-linux:latest',
+    terminalEnabled: false,
+    ports: [80],
+    type: LabTeamType.BLUE_TEAM,
+    incidentScenario: 'A Linux server in your infrastructure has shown signs of suspicious activity. The system logs indicate potential privilege escalation attempts. You need to analyze the auditd logs to determine if an attacker has gained elevated privileges, identify what commands were executed with sudo, and assess whether any persistence mechanisms were established.',
+    investigativeQuestions: [
+      {
+        id: 'q1',
+        question: 'What command was executed with sudo to escalate privileges?',
+        flag: 'sudo -i',
+        hint: 'Look for sudo EXECVE events with shell commands'
+      },
+      {
+        id: 'q2',
+        question: 'What backdoor user account was created?',
+        flag: 'hacker2',
+        hint: 'Search for useradd or adduser commands in the audit logs'
+      },
+      {
+        id: 'q3',
+        question: 'Which configuration file was modified to maintain access?',
+        flag: '/etc/sudoers',
+        hint: 'Look for file modification events on sudo-related configuration files'
+      },
+      {
+        id: 'q4',
+        question: 'What was the original user account that was compromised?',
+        flag: 'appuser',
+        hint: 'Find the user account that initiated the sudo commands'
+      }
+    ]
+  },
+  {
+    id: '20',
+    slug: 'network-forensics-dns',
+    title: 'Network Forensics: DNS C2 Traffic',
+    description: 'Analyze PCAP data to identify DNS-based command and control (C2) communication.',
+    category: LabCategory.FORENSICS,
+    difficulty: Difficulty.INSANE,
+    points: 500,
+    estimatedTime: 150,
+    learningObjectives: [
+      'Analyze PCAP network captures',
+      'Identify DNS tunneling techniques',
+      'Detect C2 communication patterns',
+      'Extract malware beacon intervals'
+    ],
+    prerequisites: ['Network protocols', 'PCAP analysis', 'DNS fundamentals'],
+    flag: 'hackforge{dns_c2_traffic_analyzed}',
+    hints: [
+      { text: 'Look for unusually long DNS query names', cost: 25 },
+      { text: 'Check for high-frequency DNS requests to the same domain', cost: 30 },
+      { text: 'Analyze the subdomain patterns for encoded data', cost: 35 }
+    ],
+    solution: 'Malware used DNS tunneling with base32-encoded subdomains, beaconing every 30 seconds.',
+    completedBy: 0,
+    rating: 0,
+    completions: 0,
+    createdAt: '2024-03-31T10:00:00Z',
+    dockerImage: 'hackforge/ssrf-basic:latest',
+    terminalEnabled: false,
+    ports: [80],
+    type: LabTeamType.BLUE_TEAM,
+    incidentScenario: 'Network monitoring has detected suspicious DNS traffic patterns from a workstation in your environment. The patterns suggest potential DNS tunneling used for command and control communication. You need to analyze the PCAP capture to identify the malicious domain, determine the beaconing interval, decode any data being exfiltrated via DNS, and characterize the C2 infrastructure.',
+    investigativeQuestions: [
+      {
+        id: 'q1',
+        question: 'What is the malicious domain used for C2 communication?',
+        flag: 'evil-c2.example.com',
+        hint: 'Look for the domain receiving the high-frequency DNS queries'
+      },
+      {
+        id: 'q2',
+        question: 'What encoding method is used in the DNS subdomains?',
+        flag: 'base32',
+        hint: 'Analyze the character set used in the subdomain names'
+      },
+      {
+        id: 'q3',
+        question: 'What is the beaconing interval in seconds?',
+        flag: '30',
+        hint: 'Calculate the time between consecutive DNS queries from the same source'
+      },
+      {
+        id: 'q4',
+        question: 'How many unique subdomains were queried in the capture?',
+        flag: '247',
+        hint: 'Count the distinct subdomain names in the DNS queries'
+      }
+    ]
   }
 ];
 

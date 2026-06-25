@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { deployContainer } from '@/lib/docker';
 import { mockLabs } from '@/lib/mockData';
+import { LabTeamType } from '@/lib/types';
 import Docker from 'dockerode';
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
@@ -31,6 +32,17 @@ export async function POST(request: NextRequest) {
 
     console.log('Found lab:', lab.title, 'with dockerImage:', lab.dockerImage);
 
+    // BLUE_TEAM labs don't deploy containers
+    if (lab.type === LabTeamType.BLUE_TEAM) {
+      return NextResponse.json({
+        containerId: `blue-${lab.id}`,
+        ip: 'localhost',
+        port: 0,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString(),
+        isBlueTeam: true
+      });
+    }
+
     // Clean up old containers for this lab and user
     try {
       const containers = await docker.listContainers({ all: true });
@@ -58,7 +70,8 @@ export async function POST(request: NextRequest) {
       userId,
       dockerImage: lab.dockerImage,
       ports: lab.ports,
-      terminalEnabled: lab.terminalEnabled
+      terminalEnabled: lab.terminalEnabled,
+      labType: lab.type
     });
 
     return NextResponse.json({

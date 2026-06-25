@@ -111,7 +111,20 @@ const LAB_DOCKERFILE_MAP: { [key: string]: string } = {
 };
 
 // Build image from local Dockerfile if it doesn't exist
-async function buildImageIfNeeded(labId: string): Promise<string> {
+async function buildImageIfNeeded(labId: string, dockerImage: string, labType?: 'RED_TEAM' | 'BLUE_TEAM'): Promise<string> {
+  // BLUE_TEAM labs reuse existing images, skip Dockerfile lookup
+  if (labType === 'BLUE_TEAM') {
+    console.log(`BLUE_TEAM lab, pulling image ${dockerImage} instead of building from Dockerfile`);
+    try {
+      await docker.pull(dockerImage);
+      console.log(`Successfully pulled image ${dockerImage}`);
+      return dockerImage;
+    } catch (err) {
+      console.error('Error pulling image:', err);
+      throw new Error(`Failed to pull image ${dockerImage} for BLUE_TEAM lab`);
+    }
+  }
+
   const dockerfilePath = LAB_DOCKERFILE_MAP[labId];
   if (!dockerfilePath) {
     throw new Error(`No Dockerfile found for lab ID: ${labId}`);
@@ -161,6 +174,7 @@ export interface ContainerConfig {
   dockerImage: string;
   ports: number[];
   terminalEnabled: boolean;
+  labType?: 'RED_TEAM' | 'BLUE_TEAM';
 }
 
 export interface ContainerInfo {
@@ -208,7 +222,7 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
     await ensureLabNetwork();
     
     // Build the image from local Dockerfile if it doesn't exist
-    const imageName = await buildImageIfNeeded(config.labId);
+    const imageName = await buildImageIfNeeded(config.labId, config.dockerImage, config.labType);
     
     // Generate a unique container name
     const containerName = `lab-${config.labId}-${config.userId}-${Date.now()}`;
@@ -251,11 +265,21 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
       Labels: {
         'lab-id': config.labId,
         'user-id': config.userId,
-        'expires-at': new Date(Date.now() + LAB_TIMEOUT_MS).toISOString()
-      }
+        'expires-at': new Date(Date.now() + LAB_TIMEOUT_MS).toISOString(),
+        'lab-type': config.labType || 'RED_TEAM'
+      },
+      Env: config.labType === 'BLUE_TEAM' ? [
+        'LAB_TYPE=BLUE_TEAM',
+        'SEED_MALICIOUS_LOGS=true'
+      ] : []
     });
     
     await container.start();
+
+    // Seed malicious logs for BLUE_TEAM labs
+    if (config.labType === 'BLUE_TEAM') {
+      await seedMaliciousLogs(container.id);
+    }
     
     // Get container info
     const containerInfo = await container.inspect();
@@ -414,5 +438,51 @@ export async function cleanupExpiredContainers(): Promise<number> {
   } catch (error) {
     console.error('Error cleaning up expired containers:', error);
     return 0;
+  }
+}
+
+// Seed malicious logs for BLUE_TEAM labs
+async function seedMaliciousLogs(containerId: string): Promise<void> {
+  try {
+    const container = docker.getContainer(containerId);
+    
+    // Generate realistic malicious log entries simulating SQL injection attacks
+    const maliciousLogs = [
+      // Normal traffic
+      '192.168.1.50 - - [10/Jan/2024:14:30:25 +0000] "GET / HTTP/1.1" 200 1234 "-" "Mozilla/5.0"',
+      '192.168.1.50 - - [10/Jan/2024:14:30:26 +0000] "GET /about HTTP/1.1" 200 567 "-" "Mozilla/5.0"',
+      // Attacker reconnaissance
+      '192.168.1.100 - - [10/Jan/2024:14:35:10 +0000] "GET /login HTTP/1.1" 200 890 "-" "Mozilla/5.0"',
+      '192.168.1.100 - - [10/Jan/2024:14:35:15 +0000] "GET /search?q=test HTTP/1.1" 200 456 "-" "Mozilla/5.0"',
+      // SQL injection attempts
+      '192.168.1.100 - - [10/Jan/2024:14:36:22 +0000] "GET /search?q=test\' OR \'1\'=\'1 HTTP/1.1" 200 456 "-" "Mozilla/5.0"',
+      '192.168.1.100 - - [10/Jan/2024:14:36:25 +0000] "GET /search?q=test\' UNION SELECT NULL,NULL,NULL-- HTTP/1.1" 200 456 "-" "Mozilla/5.0"',
+      '192.168.1.100 - - [10/Jan/2024:14:36:30 +0000] "GET /search?q=test\' UNION SELECT username,password FROM users-- HTTP/1.1" 200 456 "-" "Mozilla/5.0"',
+      '192.168.1.100 - - [10/Jan/2024:14:36:35 +0000] "GET /search?q=test\' OR 1=1-- HTTP/1.1" 200 456 "-" "Mozilla/5.0"',
+      '192.168.1.100 - - [10/Jan/2024:14:36:40 +0000] "GET /search?q=test\'; DROP TABLE users-- HTTP/1.1" 200 456 "-" "Mozilla/5.0"',
+      // More normal traffic
+      '192.168.1.75 - - [10/Jan/2024:14:40:00 +0000] "GET /products HTTP/1.1" 200 2345 "-" "Mozilla/5.0"',
+      '192.168.1.75 - - [10/Jan/2024:14:40:05 +0000] "GET /contact HTTP/1.1" 200 789 "-" "Mozilla/5.0"',
+      // Attacker continues
+      '192.168.1.100 - - [10/Jan/2024:14:42:15 +0000] "GET /search?q=test\' UNION SELECT 1,2,3,4-- HTTP/1.1" 200 456 "-" "Mozilla/5.0"',
+      '192.168.1.100 - - [10/Jan/2024:14:42:20 +0000] "GET /search?q=test\' UNION SELECT column_name FROM information_schema.columns-- HTTP/1.1" 200 456 "-" "Mozilla/5.0"',
+      '192.168.1.100 - - [10/Jan/2024:14:42:25 +0000] "GET /search?q=test\' AND 1=1-- HTTP/1.1" 200 456 "-" "Mozilla/5.0"',
+    ];
+    
+    const logContent = maliciousLogs.join('\n') + '\n';
+    
+    // Append logs to /var/log/nginx/access.log inside the container
+    const exec = await container.exec({
+      Cmd: ['sh', '-c', `echo '${logContent}' >> /var/log/nginx/access.log`],
+      AttachStdout: true,
+      AttachStderr: true,
+    });
+    
+    await exec.start({ hijack: false, stdin: false });
+    
+    console.log('Successfully seeded malicious logs for BLUE_TEAM container:', containerId);
+  } catch (error) {
+    console.error('Error seeding malicious logs:', error);
+    // Don't throw - allow container to start even if log seeding fails
   }
 }

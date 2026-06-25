@@ -19,6 +19,7 @@ interface ContainerInfo {
   port: number;
   expiresAt: string;
   terminalPort?: number;
+  isBlueTeam?: boolean;
 }
 
 interface ContainerStatus {
@@ -40,11 +41,11 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
   useEffect(() => {
     const checkExistingContainer = async () => {
       if (!user) return;
-      
+
       try {
         const response = await fetch(`/api/labs/lab-status/${labId}`);
         const data = await response.json();
-        
+
         if (data.running) {
           setContainerInfo({
             containerId: data.containerId,
@@ -52,6 +53,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
             port: 80,
             expiresAt: data.expiresAt,
             terminalPort: terminalEnabled ? 7681 : undefined,
+            isBlueTeam: data.isBlueTeam,
           });
           setContainerStatus({
             status: 'running',
@@ -65,7 +67,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
         console.error('Error checking existing container:', err);
       }
     };
-    
+
     checkExistingContainer();
   }, [labId, user, terminalEnabled]);
 
@@ -216,6 +218,11 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
   };
 
   if (!user) {
+    return null;
+  }
+
+  // BLUE_TEAM labs don't need container deployment UI
+  if (containerInfo?.isBlueTeam) {
     return null;
   }
 

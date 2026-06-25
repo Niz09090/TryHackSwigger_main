@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Docker from 'dockerode';
 import os from 'os';
+import { mockLabs } from '@/lib/mockData';
+import { LabTeamType } from '@/lib/types';
 
 const docker = new Docker(
   os.platform() === 'win32'
@@ -23,6 +25,19 @@ export async function GET(
         { error: 'Missing labId' },
         { status: 400 }
       );
+    }
+
+    // Check if this is a BLUE_TEAM lab
+    const lab = mockLabs.find(l => l.id === labId);
+    if (lab?.type === LabTeamType.BLUE_TEAM) {
+      return NextResponse.json({
+        running: true,
+        containerId: `blue-${labId}`,
+        containerIP: 'localhost',
+        timeRemaining: 1000 * 60 * 60 * 4,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString(),
+        isBlueTeam: true
+      });
     }
 
     // Find running container by lab ID label

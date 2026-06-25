@@ -26,9 +26,11 @@ import {
   Shield,
   Lock,
   ChevronRight,
-  BookOpen
+  BookOpen,
+  Download
 } from 'lucide-react';
 import { mockLabs } from '@/lib/mockData';
+import { LabTeamType } from '@/lib/types';
 
 export default function LabDetailPage() {
   const params = useParams();
@@ -65,6 +67,9 @@ export default function LabDetailPage() {
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [points, setPoints] = useState(1000); // Mock user points
   const [isSolved, setIsSolved] = useState(false);
+  const [questionAnswers, setQuestionAnswers] = useState<Record<string, string>>({});
+  const [questionStatus, setQuestionStatus] = useState<Record<string, 'idle' | 'loading' | 'correct' | 'incorrect'>>({});
+  const [questionMessages, setQuestionMessages] = useState<Record<string, string>>({});
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -176,6 +181,57 @@ export default function LabDetailPage() {
     }
   };
 
+  const submitQuestionAnswer = async (questionId: string, correctFlag: string) => {
+    const answer = questionAnswers[questionId];
+    if (!answer?.trim()) return;
+
+    setQuestionStatus(prev => ({ ...prev, [questionId]: 'loading' }));
+
+    try {
+      // Simulate API call - in production, this would call the flag verification endpoint
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      if (answer.trim() === correctFlag) {
+        setQuestionStatus(prev => ({ ...prev, [questionId]: 'correct' }));
+        setQuestionMessages(prev => ({ ...prev, [questionId]: 'Correct answer!' }));
+        setPoints(prev => prev + Math.floor(lab.points / (lab.investigativeQuestions?.length || 1)));
+      } else {
+        setQuestionStatus(prev => ({ ...prev, [questionId]: 'incorrect' }));
+        setQuestionMessages(prev => ({ ...prev, [questionId]: 'Incorrect answer. Try again.' }));
+      }
+
+      setTimeout(() => {
+        setQuestionStatus(prev => ({ ...prev, [questionId]: 'idle' }));
+        setQuestionMessages(prev => ({ ...prev, [questionId]: '' }));
+      }, 3000);
+    } catch (error) {
+      console.error('Question submission error:', error);
+      setQuestionStatus(prev => ({ ...prev, [questionId]: 'incorrect' }));
+      setQuestionMessages(prev => ({ ...prev, [questionId]: 'Error submitting answer.' }));
+    }
+  };
+
+  const downloadLogs = async () => {
+    try {
+      const response = await fetch(`/api/labs/${lab.id}/download-logs`);
+      if (!response.ok) {
+        throw new Error('Failed to download logs');
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `access-log-${lab.id}-${Date.now()}.log`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading logs:', error);
+      alert('Failed to download logs. Make sure the container is running.');
+    }
+  };
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'Easy':
@@ -273,72 +329,186 @@ export default function LabDetailPage() {
               </CardContent>
             </Card>
 
-            {/* Flag Submission */}
-            <Card className="bg-surface-black border-border-dark">
-              <CardHeader>
-                <CardTitle className="text-white text-xl flex items-center">
-                  <Shield className="h-5 w-5 mr-2 text-neon-cyan" />
-                  Submit Flag
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label htmlFor="flag" className="text-sm font-medium text-gray-300">
-                    Enter the flag you found:
-                  </label>
-                  <div className="flex space-x-3">
-                    <input
-                      id="flag"
-                      type="text"
-                      value={flag}
-                      onChange={(e) => setFlag(e.target.value)}
-                      placeholder="flag{format}"
-                      disabled={isSolved || submissionStatus === 'loading'}
-                      className="flex-1 px-4 py-3 bg-deep-black border border-border-dark rounded-lg text-white placeholder-gray-500 font-mono focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green/20 transition-all disabled:opacity-50"
-                    />
-                    <Button 
-                      type="button"
+            {/* Flag Submission - RED_TEAM */}
+            {lab.type !== LabTeamType.BLUE_TEAM && (
+              <Card className="bg-surface-black border-border-dark">
+                <CardHeader>
+                  <CardTitle className="text-white text-xl flex items-center">
+                    <Shield className="h-5 w-5 mr-2 text-neon-cyan" />
+                    Submit Flag
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="flag" className="text-sm font-medium text-gray-300">
+                      Enter the flag you found:
+                    </label>
+                    <div className="flex space-x-3">
+                      <input
+                        id="flag"
+                        type="text"
+                        value={flag}
+                        onChange={(e) => setFlag(e.target.value)}
+                        placeholder="flag{format}"
+                        disabled={isSolved || submissionStatus === 'loading'}
+                        className="flex-1 px-4 py-3 bg-deep-black border border-border-dark rounded-lg text-white placeholder-gray-500 font-mono focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green/20 transition-all disabled:opacity-50"
+                      />
+                      <Button 
+                        type="button"
+                        variant="neon"
+                        onClick={submitFlag}
+                        disabled={isSolved || submissionStatus === 'loading' || !flag.trim()}
+                        className="btn-neon min-w-[100px]"
+                      >
+                        {submissionStatus === 'loading' ? (
+                          <div className="flex items-center">
+                            <div className="w-4 h-4 border-2 border-neon-green border-t-transparent rounded-full animate-spin mr-2"></div>
+                            Submitting
+                          </div>
+                        ) : isSolved ? (
+                          'Solved'
+                        ) : (
+                          'Submit'
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {submissionStatus === 'correct' && (
+                    <div className="flex items-center space-x-2 text-neon-green bg-neon-green/10 border border-neon-green/30 rounded-lg p-3">
+                      <Check className="h-5 w-5" />
+                      <span className="font-medium">{submissionMessage}</span>
+                    </div>
+                  )}
+
+                  {submissionStatus === 'incorrect' && (
+                    <div className="flex items-center space-x-2 text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+                      <AlertCircle className="h-5 w-5" />
+                      <span className="font-medium">{submissionMessage}</span>
+                    </div>
+                  )}
+
+                  {isSolved && (
+                    <div className="flex items-center space-x-2 text-neon-cyan bg-neon-cyan/10 border border-neon-cyan/30 rounded-lg p-3">
+                      <Star className="h-5 w-5" />
+                      <span className="font-medium">Lab completed! You earned {lab.points} points.</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* BLUE_TEAM Interface */}
+            {lab.type === LabTeamType.BLUE_TEAM && (
+              <>
+                {/* Incident Scenario */}
+                <Card className="bg-surface-black border-border-dark">
+                  <CardHeader>
+                    <CardTitle className="text-white text-xl flex items-center">
+                      <AlertCircle className="h-5 w-5 mr-2 text-orange-400" />
+                      Incident Scenario
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-300 leading-relaxed">
+                      {lab.incidentScenario}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Download Logs */}
+                <Card className="bg-surface-black border-border-dark">
+                  <CardHeader>
+                    <CardTitle className="text-white text-xl flex items-center">
+                      <Download className="h-5 w-5 mr-2 text-blue-400" />
+                      Download Logs
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-400 mb-4">
+                      Download the web server access logs to analyze the attack patterns and answer the investigative questions.
+                    </p>
+                    <Button
+                      onClick={downloadLogs}
                       variant="neon"
-                      onClick={submitFlag}
-                      disabled={isSolved || submissionStatus === 'loading' || !flag.trim()}
-                      className="btn-neon min-w-[100px]"
+                      className="w-full"
                     >
-                      {submissionStatus === 'loading' ? (
-                        <div className="flex items-center">
-                          <div className="w-4 h-4 border-2 border-neon-green border-t-transparent rounded-full animate-spin mr-2"></div>
-                          Submitting
-                        </div>
-                      ) : isSolved ? (
-                        'Solved'
-                      ) : (
-                        'Submit'
-                      )}
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Access Logs
                     </Button>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
 
-                {submissionStatus === 'correct' && (
-                  <div className="flex items-center space-x-2 text-neon-green bg-neon-green/10 border border-neon-green/30 rounded-lg p-3">
-                    <Check className="h-5 w-5" />
-                    <span className="font-medium">{submissionMessage}</span>
-                  </div>
-                )}
-
-                {submissionStatus === 'incorrect' && (
-                  <div className="flex items-center space-x-2 text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg p-3">
-                    <AlertCircle className="h-5 w-5" />
-                    <span className="font-medium">{submissionMessage}</span>
-                  </div>
-                )}
-
-                {isSolved && (
-                  <div className="flex items-center space-x-2 text-neon-cyan bg-neon-cyan/10 border border-neon-cyan/30 rounded-lg p-3">
-                    <Star className="h-5 w-5" />
-                    <span className="font-medium">Lab completed! You earned {lab.points} points.</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                {/* Investigative Questions */}
+                <Card className="bg-surface-black border-border-dark">
+                  <CardHeader>
+                    <CardTitle className="text-white text-xl flex items-center">
+                      <Target className="h-5 w-5 mr-2 text-purple-400" />
+                      Investigative Questions
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {lab.investigativeQuestions?.map((question, index) => (
+                      <div key={question.id} className="space-y-3">
+                        <div className="flex items-start space-x-3">
+                          <div className="flex-shrink-0 w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center">
+                            <span className="text-purple-400 font-medium text-sm">{index + 1}</span>
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-white font-medium mb-2">{question.question}</p>
+                            <div className="flex space-x-3">
+                              <input
+                                type="text"
+                                value={questionAnswers[question.id] || ''}
+                                onChange={(e) => setQuestionAnswers(prev => ({ ...prev, [question.id]: e.target.value }))}
+                                placeholder="Enter your answer..."
+                                disabled={questionStatus[question.id] === 'correct'}
+                                className="flex-1 px-4 py-2 bg-deep-black border border-border-dark rounded-lg text-white placeholder-gray-500 font-mono focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/20 transition-all disabled:opacity-50"
+                              />
+                              <Button
+                                onClick={() => submitQuestionAnswer(question.id, question.flag)}
+                                disabled={!questionAnswers[question.id]?.trim() || questionStatus[question.id] === 'correct' || questionStatus[question.id] === 'loading'}
+                                variant="neon"
+                                className="min-w-[100px]"
+                              >
+                                {questionStatus[question.id] === 'loading' ? (
+                                  <div className="flex items-center">
+                                    <div className="w-4 h-4 border-2 border-neon-green border-t-transparent rounded-full animate-spin mr-2"></div>
+                                    Checking
+                                  </div>
+                                ) : questionStatus[question.id] === 'correct' ? (
+                                  'Correct'
+                                ) : (
+                                  'Submit'
+                                )}
+                              </Button>
+                            </div>
+                            {question.hint && (
+                              <p className="text-gray-500 text-sm mt-2">
+                                <Lightbulb className="h-3 w-3 inline mr-1" />
+                                Hint: {question.hint}
+                              </p>
+                            )}
+                            {questionStatus[question.id] === 'correct' && (
+                              <div className="flex items-center space-x-2 text-neon-green bg-neon-green/10 border border-neon-green/30 rounded-lg p-3 mt-2">
+                                <Check className="h-4 w-4" />
+                                <span className="font-medium text-sm">{questionMessages[question.id]}</span>
+                              </div>
+                            )}
+                            {questionStatus[question.id] === 'incorrect' && (
+                              <div className="flex items-center space-x-2 text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg p-3 mt-2">
+                                <AlertCircle className="h-4 w-4" />
+                                <span className="font-medium text-sm">{questionMessages[question.id]}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </>
+            )}
 
             {/* Hints Section */}
             <Card className="bg-surface-black border-border-dark">

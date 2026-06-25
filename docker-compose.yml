@@ -4,17 +4,17 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
+        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-http://localhost:3075}
     image: hackforge:${APP_VERSION:-latest}
     container_name: hackforge-app
     ports:
-      - "${HOST_PORT:-3004}:3000"
+      - "${HOST_PORT:-3075}:3075"
     env_file:
       - path: .env
         required: false
     environment:
       NODE_ENV: production
-      PORT: 3000
+      PORT: 3075
       HOSTNAME: 0.0.0.0
       # Server-side data directory (bind a named volume in production)
       DATA_DIR: ${DATA_DIR:-/app/data}

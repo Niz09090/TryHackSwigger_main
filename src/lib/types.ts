@@ -51,6 +51,21 @@ export interface Lab {
   dockerImage: string;
   terminalEnabled: boolean;
   ports: number[];
+  type?: LabTeamType;
+  incidentScenario?: string;
+  investigativeQuestions?: InvestigativeQuestion[];
+}
+
+export interface InvestigativeQuestion {
+  id: string;
+  question: string;
+  flag: string;
+  hint?: string;
+}
+
+export enum LabTeamType {
+  RED_TEAM = 'RED_TEAM',
+  BLUE_TEAM = 'BLUE_TEAM'
 }
 
 export interface BlueLab {
