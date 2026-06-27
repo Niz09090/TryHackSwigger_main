@@ -36,7 +36,6 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
   const [containerStatus, setContainerStatus] = useState<ContainerStatus | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [baseUrl, setBaseUrl] = useState<string>('http://localhost:3075');
 
   // Check for existing container on mount
   useEffect(() => {
@@ -71,14 +70,6 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
 
     checkExistingContainer();
   }, [labId, user, terminalEnabled]);
-
-  // Fetch host IP on mount
-  useEffect(() => {
-    fetch('/api/host-info')
-      .then(res => res.json())
-      .then(data => setBaseUrl(data.baseUrl))
-      .catch(() => setBaseUrl(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3075'));
-  }, []);
 
   // Poll container status every 30 seconds
   useEffect(() => {
@@ -215,13 +206,13 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
   const openTerminal = () => {
     if (!containerInfo?.terminalPort || !labId) return;
     // Always use proxy for terminal access
-    window.open(`${baseUrl}/api/lab-proxy/${labId}/`, '_blank');
+    window.open(`${window.location.origin}/api/lab-proxy/${labId}/`, '_blank');
   };
 
   const openLabUrl = () => {
     if (!labId) return;
     // Always use proxy for lab access
-    window.open(`${baseUrl}/api/lab-proxy/${labId}/`, '_blank');
+    window.open(`${window.location.origin}/api/lab-proxy/${labId}/`, '_blank');
   };
 
   if (!user) {
@@ -289,7 +280,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
             <div className="p-3 bg-deep-black rounded-lg">
               <div className="text-gray-400 text-xs mb-1">Access URL</div>
               <div className="text-white font-mono text-xs break-all">
-                {baseUrl}/api/lab-proxy/{labId}/
+                {window.location.origin}/api/lab-proxy/{labId}/
               </div>
             </div>
 
