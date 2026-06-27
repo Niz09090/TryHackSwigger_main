@@ -139,30 +139,42 @@ async function buildImageIfNeeded(labId: string, dockerImage: string, labType?: 
   } catch (err) {
     // Image doesn't exist locally, build it
     console.log(`Building image ${imageName} from ${dockerfilePath}...`);
-    
+
+    // Check the build context directory exists
+    if (!fs.existsSync(dockerfilePath)) {
+      throw new Error(`Build context not found for ${imageName} at ${dockerfilePath}`);
+    }
+
+    const tar = require('tar-fs');
+    const tarStream = tar.pack(dockerfilePath);
+
     return new Promise((resolve, reject) => {
-      docker.buildImage({
-        context: dockerfilePath,
-        src: ['.']
-      }, { t: imageName }, (error: Error | null, stream: NodeJS.ReadableStream | undefined) => {
+      docker.buildImage(tarStream, { t: imageName }, (error: Error | null, stream: NodeJS.ReadableStream | undefined) => {
         if (error) {
           console.error('Error building image:', error);
           return reject(error);
         }
-        
+
         if (!stream) {
-          console.error('Build stream is undefined');
           return reject(new Error('Build stream is undefined'));
         }
-        
-        docker.modem.followProgress(stream, (err: Error | null) => {
-          if (err) {
-            console.error('Error following build progress:', err);
-            return reject(err);
+
+        docker.modem.followProgress(
+          stream,
+          (err: Error | null, output: unknown[]) => {
+            if (err) {
+              console.error('Error following build progress:', err);
+              return reject(err);
+            }
+            console.log(`Successfully built image ${imageName}`);
+            resolve(imageName);
+          },
+          (event: unknown) => {
+            const e = event as { stream?: string; error?: string };
+            if (e.stream) process.stdout.write(e.stream);
+            if (e.error) console.error('Build error:', e.error);
           }
-          console.log(`Successfully built image ${imageName}`);
-          resolve(imageName);
-        });
+        );
       });
     });
   }

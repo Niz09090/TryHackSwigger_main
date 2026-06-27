@@ -4,7 +4,11 @@ import { mockLabs } from '@/lib/mockData';
 import { LabTeamType } from '@/lib/types';
 import Docker from 'dockerode';
 
-const docker = new Docker({ socketPath: '/var/run/docker.sock' });
+const docker = new Docker(
+  process.platform === 'win32'
+    ? { socketPath: '//./pipe/docker_engine' }
+    : { socketPath: '/var/run/docker.sock' }
+);
 
 export async function POST(request: NextRequest) {
   try {
