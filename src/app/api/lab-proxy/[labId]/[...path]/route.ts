@@ -9,6 +9,26 @@ const docker = new Docker(
     : { socketPath: '/var/run/docker.sock' }
 );
 
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 5, delay = 1000): Promise<Response> {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url, options);
+      return response;
+    } catch (error) {
+      const err = error as Error;
+      if (err.message.includes('ECONNREFUSED') || err.message.includes('fetch failed')) {
+        if (i < maxRetries - 1) {
+          console.log(`Fetch failed (attempt ${i + 1}/${maxRetries}), retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        }
+      }
+      throw error;
+    }
+  }
+  throw new Error('Max retries exceeded');
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { labId: string; path: string[] } }
@@ -99,7 +119,7 @@ async function handleProxy(
 
     const proxyHost = new URL(proxyBaseUrl).host;
 
-    const response = await fetch(targetUrl, {
+    const response = await fetchWithRetry(targetUrl, {
       method: request.method,
       headers: {
         ...Object.fromEntries(request.headers.entries()),
