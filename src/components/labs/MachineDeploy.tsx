@@ -52,7 +52,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
             ip: data.containerIP || 'unknown',
             port: 80,
             expiresAt: data.expiresAt,
-            terminalPort: terminalEnabled ? 7681 : undefined,
+            terminalPort: terminalEnabled ? data.terminalPort : undefined,
             isBlueTeam: data.isBlueTeam,
           });
           setContainerStatus({
@@ -60,7 +60,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
             timeRemaining: data.timeRemaining,
             ip: data.containerIP || 'unknown',
             port: 80,
-            terminalPort: terminalEnabled ? 7681 : undefined,
+            terminalPort: terminalEnabled ? data.terminalPort : undefined,
           });
         }
       } catch (err) {
@@ -205,14 +205,14 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
 
   const openTerminal = () => {
     if (!containerInfo?.terminalPort || !labId) return;
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3075';
     // Always use proxy for terminal access
     window.open(`${baseUrl}/api/lab-proxy/${labId}/`, '_blank');
   };
 
   const openLabUrl = () => {
     if (!labId) return;
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3075';
     // Always use proxy for lab access
     window.open(`${baseUrl}/api/lab-proxy/${labId}/`, '_blank');
   };
@@ -282,7 +282,7 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
             <div className="p-3 bg-deep-black rounded-lg">
               <div className="text-gray-400 text-xs mb-1">Access URL</div>
               <div className="text-white font-mono text-xs break-all">
-                {process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/lab-proxy/{labId}/
+                {process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3075'}/api/lab-proxy/{labId}/
               </div>
             </div>
 

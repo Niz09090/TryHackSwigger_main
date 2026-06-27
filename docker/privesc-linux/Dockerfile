@@ -47,4 +47,4 @@ RUN echo 'hackforge{not_the_flag}' > /etc/decoy
 EXPOSE 22 7681
 
 # Start services
-CMD service ssh start && ttyd -p 7681 bash && tail -f /dev/null
+CMD bash -c "service ssh start && ttyd -p 7681 --writable bash & tail -f /dev/null"

@@ -1,6 +1,10 @@
 import Docker from 'dockerode';
 import fs from 'fs';
 import path from 'path';
+import { exec as execCallback } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(execCallback);
 
 const docker = new Docker(
   process.platform === 'win32'
@@ -137,46 +141,26 @@ async function buildImageIfNeeded(labId: string, dockerImage: string, labType?: 
     console.log(`Image ${imageName} already exists locally, skipping build`);
     return imageName;
   } catch (err) {
-    // Image doesn't exist locally, build it
     console.log(`Building image ${imageName} from ${dockerfilePath}...`);
 
-    // Check the build context directory exists
     if (!fs.existsSync(dockerfilePath)) {
-      throw new Error(`Build context not found for ${imageName} at ${dockerfilePath}`);
+      throw new Error(`Build context not found for ${imageName} at ${dockerfilePath}. Make sure LAB_DOCKER_DIR is mounted correctly.`);
     }
 
-    const tar = require('tar-fs');
-    const tarStream = tar.pack(dockerfilePath);
-
-    return new Promise((resolve, reject) => {
-      docker.buildImage(tarStream, { t: imageName }, (error: Error | null, stream: NodeJS.ReadableStream | undefined) => {
-        if (error) {
-          console.error('Error building image:', error);
-          return reject(error);
-        }
-
-        if (!stream) {
-          return reject(new Error('Build stream is undefined'));
-        }
-
-        docker.modem.followProgress(
-          stream,
-          (err: Error | null, output: unknown[]) => {
-            if (err) {
-              console.error('Error following build progress:', err);
-              return reject(err);
-            }
-            console.log(`Successfully built image ${imageName}`);
-            resolve(imageName);
-          },
-          (event: unknown) => {
-            const e = event as { stream?: string; error?: string };
-            if (e.stream) process.stdout.write(e.stream);
-            if (e.error) console.error('Build error:', e.error);
-          }
-        );
-      });
-    });
+    // Use docker CLI to build since dockerode buildImage requires a tar stream
+    // and the docker CLI is available via the mounted socket
+    try {
+      const { stdout, stderr } = await execAsync(
+        `docker build -t ${imageName} ${dockerfilePath}`
+      );
+      if (stdout) console.log('Build output:', stdout);
+      if (stderr) console.log('Build stderr:', stderr);
+      console.log(`Successfully built image ${imageName}`);
+      return imageName;
+    } catch (buildErr) {
+      console.error(`Failed to build image ${imageName}:`, buildErr);
+      throw new Error(`Failed to build Docker image ${imageName}`);
+    }
   }
 }
 

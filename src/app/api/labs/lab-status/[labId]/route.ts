@@ -11,7 +11,7 @@ const docker = new Docker(
 );
 
 const LAB_NETWORK = 'hackforge-network';
-const LAB_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+const LAB_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 hours
 
 export async function GET(
   request: NextRequest,
@@ -71,6 +71,7 @@ export async function GET(
     return NextResponse.json({
       running: true,
       containerId: containerInfo.Id,
+      containerIP: containerIP,
       accessUrl: `${baseUrl}/api/lab-proxy/${labId}/`,
       timeRemaining,
       expiresAt: expiresAt.toISOString(),
