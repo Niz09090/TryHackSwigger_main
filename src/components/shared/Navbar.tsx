@@ -36,7 +36,7 @@ export const Navbar: React.FC = () => {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <Shield className="h-8 w-8 text-neon-green" />
-            <span className="text-xl font-bold text-white">HackForge</span>
+            <span className="text-xl font-bold text-white">TryHackSwigger</span>
           </Link>
 
           {/* Desktop Navigation */}

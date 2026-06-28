@@ -1,6 +1,6 @@
-# 🛡️ HackForge
+# 🛡️ TryHackSwigger
 
-A modern cybersecurity learning platform and CTF competition arena built with Next.js 14. HackForge provides hands-on labs, interactive challenges, competitive events, and a vibrant community for aspiring security professionals.
+A modern cybersecurity learning platform and CTF competition arena built with Next.js 14. TryHackSwigger provides hands-on labs, interactive challenges, competitive events, and a vibrant community for aspiring security professionals.
 
 ## 🌟 Key Features
 
