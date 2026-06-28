@@ -1356,8 +1356,82 @@ export const mockRaces: Race[] = [
       'Attack other participants',
       'No DoS attacks'
     ],
-    challenges: [],
-    participants: []
+    challenges: [
+      {
+        id: 'race2-1',
+        title: 'SQLi 101',
+        description: 'Find and exploit SQL injection in login form',
+        points: 50,
+        flag: 'flag{race2_sql_master}',
+        firstBloodBonus: 25,
+        solves: 8
+      },
+      {
+        id: 'race2-2',
+        title: 'XSS Filter Bypass',
+        description: 'Bypass XSS filters to inject malicious script',
+        points: 100,
+        flag: 'flag{race2_xs_expert}',
+        firstBloodBonus: 50,
+        solves: 5
+      },
+      {
+        id: 'race2-3',
+        title: 'Privilege Escalation',
+        description: 'Escalate privileges to root on Linux system',
+        points: 150,
+        flag: 'flag{race2_privesc_master}',
+        firstBloodBonus: 75,
+        solves: 3
+      },
+      {
+        id: 'race2-4',
+        title: 'SSRF Cloud Metadata',
+        description: 'Exploit SSRF to access cloud metadata endpoints',
+        points: 200,
+        flag: 'flag{race2_ssrf_expert}',
+        firstBloodBonus: 100,
+        solves: 2
+      }
+    ],
+    participants: [
+      {
+        userId: '1',
+        username: 'CyberNinja',
+        avatar: '/avatars/ninja.png',
+        joinTime: '2026-12-20T10:00:00Z',
+        score: 450,
+        solves: ['race2-1', 'race2-2', 'race2-3'],
+        lastSolveTime: '2026-12-25T15:30:00Z'
+      },
+      {
+        userId: '2',
+        username: 'zero_day',
+        avatar: '/avatars/warrior.png',
+        joinTime: '2026-12-21T11:00:00Z',
+        score: 300,
+        solves: ['race2-1', 'race2-2'],
+        lastSolveTime: '2026-12-26T14:20:00Z'
+      },
+      {
+        userId: '3',
+        username: 'root_access',
+        avatar: '/avatars/pixel.png',
+        joinTime: '2026-12-22T12:00:00Z',
+        score: 150,
+        solves: ['race2-1'],
+        lastSolveTime: '2026-12-27T16:45:00Z'
+      },
+      {
+        userId: '4',
+        username: 'byte_hunter',
+        avatar: '/avatars/breaker.png',
+        joinTime: '2026-12-23T13:00:00Z',
+        score: 100,
+        solves: [],
+        lastSolveTime: '2026-12-28T10:00:00Z'
+      }
+    ]
   },
   {
     id: '3',
