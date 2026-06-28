@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Docker from 'dockerode';
 
+export const dynamic = 'force-dynamic';
+
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
 export async function POST(request: NextRequest) {

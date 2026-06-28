@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { resetContainer } from '@/lib/docker';
 import { mockLabs } from '@/lib/mockData';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

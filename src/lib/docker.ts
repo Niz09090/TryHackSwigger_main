@@ -4,19 +4,27 @@ import path from 'path';
 // @ts-ignore
 import * as tar from 'tar-fs';
 
-const docker = new Docker(
-  process.platform === 'win32'
-    ? { socketPath: '//./pipe/docker_engine' }
-    : { socketPath: '/var/run/docker.sock' }
-);
-// Test Docker connection on startup
-docker.ping((err) => {
-  if (err) {
-    console.error('Docker connection failed:', err);
-  } else {
-    console.log('Docker connection successful');
-  }
-});
+// Skip Docker initialization during build
+const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
+
+let docker: Docker | null = null;
+
+if (!isBuildPhase) {
+  docker = new Docker(
+    process.platform === 'win32'
+      ? { socketPath: '//./pipe/docker_engine' }
+      : { socketPath: '/var/run/docker.sock' }
+  );
+  
+  // Test Docker connection on startup
+  docker?.ping((err) => {
+    if (err) {
+      console.error('Docker connection failed:', err);
+    } else {
+      console.log('Docker connection successful');
+    }
+  });
+}
 
 export const LAB_NETWORK = 'tryhackswigger-network';
 const LAB_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 hours
@@ -114,6 +122,10 @@ const LAB_DOCKERFILE_MAP: { [key: string]: string } = {
 
 // Build image from local Dockerfile if it doesn't exist
 async function buildImageIfNeeded(labId: string, dockerImage: string, labType?: 'RED_TEAM' | 'BLUE_TEAM'): Promise<string> {
+  if (!docker) {
+    throw new Error('Docker is not available during build phase');
+  }
+
   // BLUE_TEAM labs reuse existing images, skip Dockerfile lookup
   if (labType === 'BLUE_TEAM') {
     console.log(`BLUE_TEAM lab, pulling image ${dockerImage} instead of building from Dockerfile`);
@@ -210,6 +222,10 @@ export interface ContainerStatus {
 
 // Ensure the lab network exists
 export async function ensureLabNetwork(): Promise<void> {
+  if (!docker) {
+    throw new Error('Docker is not available during build phase');
+  }
+
   try {
     console.log('Ensuring lab network exists:', LAB_NETWORK);
     const networks = await docker.listNetworks();
@@ -232,6 +248,10 @@ export async function ensureLabNetwork(): Promise<void> {
 
 // Deploy a new container for a lab
 export async function deployContainer(config: ContainerConfig): Promise<ContainerInfo> {
+  if (!docker) {
+    throw new Error('Docker is not available during build phase');
+  }
+
   try {
     console.log('Deploying container for lab:', config.labId);
     await ensureLabNetwork();
@@ -331,6 +351,10 @@ export async function deployContainer(config: ContainerConfig): Promise<Containe
 
 // Terminate a container
 export async function terminateContainer(containerId: string): Promise<boolean> {
+  if (!docker) {
+    throw new Error('Docker is not available during build phase');
+  }
+
   try {
     const container = docker.getContainer(containerId);
     
@@ -349,6 +373,10 @@ export async function terminateContainer(containerId: string): Promise<boolean> 
 
 // Get container status
 export async function getContainerStatus(containerId: string): Promise<ContainerStatus> {
+  if (!docker) {
+    throw new Error('Docker is not available during build phase');
+  }
+
   try {
     const container = docker.getContainer(containerId);
     const containerInfo = await container.inspect();
@@ -429,6 +457,10 @@ export async function resetContainer(config: ContainerConfig, oldContainerId: st
 
 // Clean up expired containers (should be run periodically)
 export async function cleanupExpiredContainers(): Promise<number> {
+  if (!docker) {
+    throw new Error('Docker is not available during build phase');
+  }
+
   try {
     const containers = await docker.listContainers({ all: true });
     let cleaned = 0;
@@ -458,6 +490,10 @@ export async function cleanupExpiredContainers(): Promise<number> {
 
 // Seed malicious logs for BLUE_TEAM labs
 async function seedMaliciousLogs(containerId: string): Promise<void> {
+  if (!docker) {
+    throw new Error('Docker is not available during build phase');
+  }
+
   try {
     const container = docker.getContainer(containerId);
     

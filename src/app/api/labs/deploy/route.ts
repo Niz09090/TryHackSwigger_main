@@ -4,6 +4,8 @@ import { mockLabs } from '@/lib/mockData';
 import { LabTeamType } from '@/lib/types';
 import Docker from 'dockerode';
 
+export const dynamic = 'force-dynamic';
+
 const docker = new Docker(
   process.platform === 'win32'
     ? { socketPath: '//./pipe/docker_engine' }

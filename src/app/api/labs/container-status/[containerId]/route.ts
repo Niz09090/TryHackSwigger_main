@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getContainerStatus } from '@/lib/docker';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { containerId: string } }
