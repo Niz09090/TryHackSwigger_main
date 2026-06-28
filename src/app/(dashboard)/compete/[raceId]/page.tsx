@@ -208,7 +208,10 @@ export default function RaceDetailPage() {
                       Starts on {new Date(race.startTime).toLocaleDateString()}
                     </div>
                     <div className="text-lg font-semibold text-white">
-                      {Math.ceil((new Date(race.startTime).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days remaining
+                      {(() => {
+                        const daysRemaining = Math.ceil((new Date(race.startTime).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                        return daysRemaining < 0 ? 'Event Ended' : `${daysRemaining} days remaining`;
+                      })()}
                     </div>
                   </div>
                   <Button 
