@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -174,8 +175,9 @@ export default function ForumPage() {
             const lastActivity = lastReply ? lastReply.createdAt : thread.createdAt;
             
             return (
-              <Card key={thread.id} className="bg-surface-black border-border-dark card-hover">
-                <CardContent className="p-6">
+              <Link href={`/forum/${thread.id}`} key={thread.id}>
+                <Card className="bg-surface-black border-border-dark card-hover cursor-pointer">
+                  <CardContent className="p-6">
                   <div className="flex items-start space-x-4">
                     {/* Thread Status Icons */}
                     <div className="flex flex-col items-center space-y-2">
@@ -248,6 +250,7 @@ export default function ForumPage() {
                   </div>
                 </CardContent>
               </Card>
+              </Link>
             );
           })}
         </div>

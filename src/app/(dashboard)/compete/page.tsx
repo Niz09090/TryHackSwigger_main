@@ -294,7 +294,10 @@ export default function CompetePage() {
                 {/* Action Button */}
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-gray-400">
-                    {race.status === 'upcoming' && `Starts in ${Math.ceil((new Date(race.startTime).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days`}
+                    {race.status === 'upcoming' && (() => {
+                      const daysUntil = Math.ceil((new Date(race.startTime).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                      return daysUntil > 0 ? `Starts in ${daysUntil} days` : 'Registration Closed';
+                    })()}
                     {race.status === 'active' && `${Math.floor((new Date().getTime() - new Date(race.startTime).getTime()) / (1000 * 60))} min elapsed`}
                     {race.status === 'completed' && 'Race finished'}
                   </div>
