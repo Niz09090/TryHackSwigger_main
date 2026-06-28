@@ -90,6 +90,21 @@ export default function LabDetailPage() {
     };
   }, [machineStatus, timeRemaining]);
 
+  // Load solved questions from localStorage on mount
+  useEffect(() => {
+    if (lab?.investigativeQuestions) {
+      const savedSolvedQuestions: Record<string, boolean> = {};
+      lab.investigativeQuestions.forEach(question => {
+        const saved = localStorage.getItem(`challenge_${lab.id}_${question.id}_solved`);
+        if (saved === 'true') {
+          savedSolvedQuestions[question.id] = true;
+          setQuestionStatus(prev => ({ ...prev, [question.id]: 'correct' }));
+          setQuestionMessages(prev => ({ ...prev, [question.id]: 'Correct answer!' }));
+        }
+      });
+    }
+  }, [lab?.id, lab?.investigativeQuestions]);
+
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -195,19 +210,25 @@ export default function LabDetailPage() {
         setQuestionStatus(prev => ({ ...prev, [questionId]: 'correct' }));
         setQuestionMessages(prev => ({ ...prev, [questionId]: 'Correct answer!' }));
         setPoints(prev => prev + Math.floor(lab.points / (lab.investigativeQuestions?.length || 1)));
+        // Save solved state to localStorage
+        localStorage.setItem(`challenge_${lab.id}_${questionId}_solved`, 'true');
       } else {
         setQuestionStatus(prev => ({ ...prev, [questionId]: 'incorrect' }));
         setQuestionMessages(prev => ({ ...prev, [questionId]: 'Incorrect answer. Try again.' }));
+        // Clear incorrect status after 3 seconds
+        setTimeout(() => {
+          setQuestionStatus(prev => ({ ...prev, [questionId]: 'idle' }));
+          setQuestionMessages(prev => ({ ...prev, [questionId]: '' }));
+        }, 3000);
       }
-
-      setTimeout(() => {
-        setQuestionStatus(prev => ({ ...prev, [questionId]: 'idle' }));
-        setQuestionMessages(prev => ({ ...prev, [questionId]: '' }));
-      }, 3000);
     } catch (error) {
       console.error('Question submission error:', error);
       setQuestionStatus(prev => ({ ...prev, [questionId]: 'incorrect' }));
       setQuestionMessages(prev => ({ ...prev, [questionId]: 'Error submitting answer.' }));
+      setTimeout(() => {
+        setQuestionStatus(prev => ({ ...prev, [questionId]: 'idle' }));
+        setQuestionMessages(prev => ({ ...prev, [questionId]: '' }));
+      }, 3000);
     }
   };
 
