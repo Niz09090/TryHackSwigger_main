@@ -400,17 +400,33 @@ export default function LeaderboardPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {mockLeaderboard
-                .filter(u => u.trend === 'up')
-                .sort((a, b) => b.points - a.points)
+                .filter(u => u.pointsGained && u.pointsGained > 0)
+                .sort((a, b) => (b.pointsGained || 0) - (a.pointsGained || 0))
                 .slice(0, 5)
                 .map((entry, index) => (
                   <div key={entry.user.id} className="flex items-center justify-between p-3 bg-deep-black rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <TrendingUp className="h-4 w-4 text-green-400" />
-                      <span className="text-white text-sm">{entry.user.displayName}</span>
+                    <div className="flex items-center space-x-3">
+                      <Badge className={`${getRankBadgeColor(index + 1)} border text-xs`}>
+                        #{index + 1}
+                      </Badge>
+                      <div className="w-8 h-8 bg-deep-black rounded-full flex items-center justify-center">
+                        {entry.user.avatar ? (
+                          <img 
+                            src={entry.user.avatar} 
+                            alt={entry.user.username}
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        ) : (
+                          <User className="h-4 w-4 text-gray-400" />
+                        )}
+                      </div>
+                      <div>
+                        <div className="text-white text-sm font-medium">{entry.user.displayName || entry.user.username}</div>
+                        <div className="text-xs text-gray-500">@{entry.user.username}</div>
+                      </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-neon-cyan font-bold">+{Math.floor(entry.points * 0.1)}</div>
+                      <div className="text-neon-cyan font-bold">+{entry.pointsGained}</div>
                       <div className="text-xs text-gray-500">this week</div>
                     </div>
                   </div>

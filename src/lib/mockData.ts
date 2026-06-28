@@ -1151,6 +1151,7 @@ export const mockLeaderboard: LeaderboardEntry[] = [
     user: {
       id: '101',
       username: 'zero_cool',
+      displayName: 'Zero Cool',
       avatar: '/avatars/zero-cool.png',
       country: 'US',
       rank: 'Legendary Hacker'
@@ -1158,13 +1159,18 @@ export const mockLeaderboard: LeaderboardEntry[] = [
     points: 28450,
     badgesCount: 45,
     labsCompleted: 156,
-    change: 0
+    change: 0,
+    trend: 'stable',
+    level: 50,
+    streak: 25,
+    pointsGained: 120
   },
   {
     rank: 2,
     user: {
       id: '102',
       username: 'acid_burn',
+      displayName: 'Acid Burn',
       avatar: '/avatars/acid-burn.png',
       country: 'UK',
       rank: 'Elite Hacker'
@@ -1172,13 +1178,18 @@ export const mockLeaderboard: LeaderboardEntry[] = [
     points: 26780,
     badgesCount: 42,
     labsCompleted: 148,
-    change: 1
+    change: 1,
+    trend: 'up',
+    level: 48,
+    streak: 18,
+    pointsGained: 450
   },
   {
     rank: 3,
     user: {
       id: '103',
       username: 'crash_override',
+      displayName: 'Crash Override',
       avatar: '/avatars/crash-override.png',
       country: 'CA',
       rank: 'Master Exploiter'
@@ -1186,13 +1197,18 @@ export const mockLeaderboard: LeaderboardEntry[] = [
     points: 25120,
     badgesCount: 38,
     labsCompleted: 142,
-    change: -1
+    change: -1,
+    trend: 'down',
+    level: 45,
+    streak: 12,
+    pointsGained: 80
   },
   {
     rank: 4,
     user: {
       id: '104',
       username: 'lord_nikon',
+      displayName: 'Lord Nikon',
       avatar: '/avatars/lord-nikon.png',
       country: 'DE',
       rank: 'Security Expert'
@@ -1200,13 +1216,18 @@ export const mockLeaderboard: LeaderboardEntry[] = [
     points: 23890,
     badgesCount: 35,
     labsCompleted: 135,
-    change: 2
+    change: 2,
+    trend: 'up',
+    level: 42,
+    streak: 8,
+    pointsGained: 320
   },
   {
     rank: 5,
     user: {
       id: '105',
       username: 'cereal_killer',
+      displayName: 'Cereal Killer',
       avatar: '/avatars/cereal-killer.png',
       country: 'AU',
       rank: 'Penetration Tester'
@@ -1214,13 +1235,18 @@ export const mockLeaderboard: LeaderboardEntry[] = [
     points: 22340,
     badgesCount: 32,
     labsCompleted: 128,
-    change: -2
+    change: -2,
+    trend: 'down',
+    level: 40,
+    streak: 5,
+    pointsGained: 150
   },
   {
     rank: 6,
     user: {
       id: '106',
       username: 'the_plague',
+      displayName: 'The Plague',
       avatar: '/avatars/the-plague.png',
       country: 'FR',
       rank: 'Security Expert'
@@ -1228,13 +1254,18 @@ export const mockLeaderboard: LeaderboardEntry[] = [
     points: 21560,
     badgesCount: 30,
     labsCompleted: 124,
-    change: 0
+    change: 0,
+    trend: 'stable',
+    level: 38,
+    streak: 15,
+    pointsGained: 200
   },
   {
     rank: 7,
     user: {
       id: '107',
       username: 'phantom_phreak',
+      displayName: 'Phantom Phreak',
       avatar: '/avatars/phantom-phreak.png',
       country: 'JP',
       rank: 'System Administrator'
@@ -1242,13 +1273,18 @@ export const mockLeaderboard: LeaderboardEntry[] = [
     points: 20890,
     badgesCount: 28,
     labsCompleted: 119,
-    change: 3
+    change: 3,
+    trend: 'up',
+    level: 35,
+    streak: 22,
+    pointsGained: 580
   },
   {
     rank: 8,
     user: {
       id: '108',
       username: 'razor_blade',
+      displayName: 'Razor Blade',
       avatar: '/avatars/razor-blade.png',
       country: 'BR',
       rank: 'Penetration Tester'
@@ -1256,13 +1292,18 @@ export const mockLeaderboard: LeaderboardEntry[] = [
     points: 19230,
     badgesCount: 26,
     labsCompleted: 112,
-    change: -1
+    change: -1,
+    trend: 'down',
+    level: 33,
+    streak: 3,
+    pointsGained: 90
   },
   {
     rank: 9,
     user: {
       id: '109',
       username: 'gadget_hackwrench',
+      displayName: 'Gadget Hackwrench',
       avatar: '/avatars/gadget.png',
       country: 'IN',
       rank: 'Security Expert'
@@ -1270,13 +1311,18 @@ export const mockLeaderboard: LeaderboardEntry[] = [
     points: 18670,
     badgesCount: 24,
     labsCompleted: 108,
-    change: 1
+    change: 1,
+    trend: 'up',
+    level: 31,
+    streak: 10,
+    pointsGained: 410
   },
   {
     rank: 10,
     user: {
       id: '110',
       username: 'tamper_proof',
+      displayName: 'Tamper Proof',
       avatar: '/avatars/tamper.png',
       country: 'MX',
       rank: 'System Administrator'
@@ -1284,7 +1330,11 @@ export const mockLeaderboard: LeaderboardEntry[] = [
     points: 17450,
     badgesCount: 22,
     labsCompleted: 102,
-    change: -2
+    change: -2,
+    trend: 'down',
+    level: 28,
+    streak: 7,
+    pointsGained: 65
   }
 ];
 

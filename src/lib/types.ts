@@ -216,6 +216,7 @@ export interface LeaderboardEntry {
   streak?: number;
   change?: number; // Rank change from previous period
   trend?: 'up' | 'down' | 'stable' | 'new';
+  pointsGained?: number; // Points gained in the last 7 days
 }
 
 export enum LeaderboardType {
