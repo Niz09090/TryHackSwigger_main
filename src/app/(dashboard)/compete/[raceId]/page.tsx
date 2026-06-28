@@ -59,6 +59,11 @@ export default function RaceDetailPage() {
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const [currentChallenge, setCurrentChallenge] = useState(0);
 
+  // Calculate days remaining for upcoming races
+  const daysRemaining = race.status === 'upcoming' 
+    ? Math.ceil((new Date(race.startTime).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    : 0;
+
   useEffect(() => {
     if (race.status === 'active') {
       const endTime = new Date(race.endTime).getTime();
@@ -208,19 +213,17 @@ export default function RaceDetailPage() {
                       Starts on {new Date(race.startTime).toLocaleDateString()}
                     </div>
                     <div className="text-lg font-semibold text-white">
-                      {(() => {
-                        const daysRemaining = Math.ceil((new Date(race.startTime).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-                        return daysRemaining < 0 ? 'Event Ended' : `${daysRemaining} days remaining`;
-                      })()}
+                      {daysRemaining < 0 ? 'Event Ended' : `${daysRemaining} days remaining`}
                     </div>
                   </div>
                   <Button 
-                    variant="neon" 
-                    className="btn-neon"
+                    variant={daysRemaining < 0 ? "outline" : "neon"}
+                    className={daysRemaining < 0 ? "" : "btn-neon"}
                     onClick={handleRegister}
+                    disabled={daysRemaining < 0}
                   >
                     <Check className="mr-2 h-4 w-4" />
-                    Register Now
+                    {daysRemaining < 0 ? 'Registration Closed' : 'Register Now'}
                   </Button>
                 </div>
               </CardContent>
