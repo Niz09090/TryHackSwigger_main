@@ -76,6 +76,16 @@
             <p>Try reading /etc/passwd or other sensitive system files.</p>
         </div>
         
+        <div class="hint">
+            <h3>Hint 4</h3>
+            <p>The flag is located at /flag.txt in the container filesystem.</p>
+        </div>
+        
+        <div class="hint">
+            <h3>Hint 5</h3>
+            <p>The basic filter removes ../ but can be bypassed using absolute paths like /flag.txt or double encoding like ....//</p>
+        </div>
+        
         <div class="back">
             <a href="index.php">← Back to File Viewer</a>
         </div>

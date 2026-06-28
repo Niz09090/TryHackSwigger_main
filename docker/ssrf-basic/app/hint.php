@@ -76,6 +76,21 @@
             <p>AWS metadata endpoint: http://169.254.169.254/latest/meta-data/</p>
         </div>
         
+        <div class="hint">
+            <h3>Hint 4</h3>
+            <p>There is a secret internal endpoint at /secret.php that contains the flag.</p>
+        </div>
+        
+        <div class="hint">
+            <h3>Hint 5</h3>
+            <p>The filter blocks 127.0.0.1 and localhost, but can be bypassed using 0.0.0.0, 127.0.0.2, or [::1] (IPv6).</p>
+        </div>
+        
+        <div class="hint">
+            <h3>Hint 6</h3>
+            <p>Try: http://0.0.0.0/secret.php to access the internal secret endpoint.</p>
+        </div>
+        
         <div class="back">
             <a href="index.php">← Back to Checker</a>
         </div>
