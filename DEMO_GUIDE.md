@@ -94,17 +94,11 @@ if (file_exists($filepath) && is_readable($filepath)) {
 ```
 
 ### How to Exploit
-The filter removes `../` but can be bypassed using:
-1. Double encoding: `....//` or `..%252f`
-2. Absolute paths: `/etc/passwd`
-3. Null bytes: `index.php%00.txt`
+The filter removes `../` but can be bypassed using absolute paths:
+1. Navigate to the file viewer
+2. Access: `?page=/flag.txt` - Read the flag file directly
 
-Try accessing:
-- `?page=/etc/passwd` - Read system files
-- `?page=/var/www/html/flag.txt` - Read flag file if exists
-- `?page=....//....//etc/passwd` - Bypass the filter
-
-The flag is displayed when the content contains 'flag' or 'hackforge'.
+The flag is located at `/flag.txt` in the container filesystem (created by Dockerfile). The flag is displayed when the content contains 'flag' or 'hackforge'.
 
 ### Flag
 **hackforge{lfi_file_reader_flag}**
@@ -114,7 +108,7 @@ The flag is displayed when the content contains 'flag' or 'hackforge'.
 ## 5. Command Injection (cmd-injection)
 
 ### Vulnerability
-The ping tool filters `;` and `|` but not `&` or `$()`:
+The ping tool filters `;` and `|` but not `&`:
 ```php
 $filteredHost = str_replace([';', '|'], '', $host);
 $command = "ping -c 4 " . $filteredHost;
@@ -123,13 +117,10 @@ $output = shell_exec($command);
 
 ### How to Exploit
 1. Navigate to the ping tool
-2. In the host field, enter: `8.8.8.8 && cat /flag.txt`
+2. In the host field, enter: `localhost && cat /flag.txt`
 3. Submit
 
-The `&&` operator executes the second command if the first succeeds. Other bypasses:
-- `8.8.8.8 & cat /flag.txt`
-- `8.8.8.8; cat /flag.txt` (if semicolon filter is bypassed)
-- `8.8.8.8 | cat /flag.txt` (if pipe filter is bypassed)
+The code filters `;` and `|` but not `&`, so use `&&` to chain commands. The hint suggests using `;` but the actual implementation filters it.
 
 The flag is displayed when the output contains 'flag' or 'hackforge'.
 
@@ -155,7 +146,7 @@ if (in_array($fileExtension, $blockedExtensions)) {
 3. Upload the file
 4. Access the uploaded file at `/uploads/shell.php5`
 
-The PHP code executes because the server is configured to execute `.php5`, `.phtml`, and `.phar` files as PHP.
+The PHP code executes because the server is configured to execute `.php5`, `.phtml`, and `.phar` files as PHP. The flag is displayed when a PHP shell is uploaded.
 
 ### Flag
 **hackforge{file_upload_flag_found}**
@@ -189,9 +180,7 @@ $dom->loadXML($xmlData, LIBXML_NOENT | LIBXML_DTDLOAD);
 
 3. The external entity reads `/etc/passwd` and displays it in the product name
 
-To read the flag, try:
-- `file:///flag.txt`
-- `file:///var/www/html/flag.txt`
+To get the flag, include "flag" or "hackforge" in the XML data - the flag is displayed when the XML contains these strings.
 
 ### Flag
 **hackforge{xxe_injection_flag}**
@@ -211,15 +200,11 @@ if (strpos($url, $blockedIP) !== false) {
 
 ### How to Exploit
 The filter blocks `127.0.0.1` and `localhost` but can be bypassed using:
-1. `http://0.0.0.0:80/flag` - 0.0.0.0 resolves to localhost
-2. `http://127.0.0.2:80/flag` - Alternative loopback address
-3. `http://[::1]:80/flag` - IPv6 loopback
-4. `http://127.1:80/flag` - Octal representation
+1. `http://0.0.0.0/secret.php` - 0.0.0.0 resolves to localhost
+2. `http://127.0.0.2/secret.php` - Alternative loopback address
+3. `http://[::1]/secret.php` - IPv6 loopback
 
-Try accessing internal services:
-- `http://0.0.0.0:80/flag`
-- `http://0.0.0.0:8080/admin`
-- `http://169.254.169.254/latest/meta-data/` (AWS metadata)
+The secret endpoint at `/secret.php` returns: `INTERNAL_SERVICE_SECRET: hackforge{ssrf_flag_found}`
 
 ### Flag
 **hackforge{ssrf_flag_found}**
@@ -279,7 +264,7 @@ $user = $users[$userId] ?? null;
 4. Change the URL to `?user_id=3` to view the admin profile
 5. Add `&show_private=true` to view private data
 
-The admin user (ID 3) contains the flag in their private data.
+The admin user (ID 3) contains the flag in their private data: `'flag' => 'hackforge{idor_flag_found}'`
 
 ### Flag
 **hackforge{idor_flag_found}**
