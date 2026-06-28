@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { mockLabs } from '@/lib/mockData';
 import { LabTeamType } from '@/lib/types';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LabDetailPage() {
   const params = useParams();
@@ -55,6 +56,8 @@ export default function LabDetailPage() {
       </div>
     );
   }
+  
+  const { user } = useAuth();
   
   const [machineStatus, setMachineStatus] = useState<'stopped' | 'starting' | 'running' | 'stopping'>('stopped');
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
@@ -92,10 +95,10 @@ export default function LabDetailPage() {
 
   // Load solved questions from localStorage on mount
   useEffect(() => {
-    if (lab?.investigativeQuestions) {
+    if (lab?.investigativeQuestions && user?.id) {
       const savedSolvedQuestions: Record<string, boolean> = {};
       lab.investigativeQuestions.forEach(question => {
-        const saved = localStorage.getItem(`challenge_${lab.id}_${question.id}_solved`);
+        const saved = localStorage.getItem(`challenge_${lab.id}_${question.id}_solved_${user.id}`);
         if (saved === 'true') {
           savedSolvedQuestions[question.id] = true;
           setQuestionStatus(prev => ({ ...prev, [question.id]: 'correct' }));
@@ -103,7 +106,7 @@ export default function LabDetailPage() {
         }
       });
     }
-  }, [lab?.id, lab?.investigativeQuestions]);
+  }, [lab?.id, lab?.investigativeQuestions, user?.id]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -210,8 +213,8 @@ export default function LabDetailPage() {
         setQuestionStatus(prev => ({ ...prev, [questionId]: 'correct' }));
         setQuestionMessages(prev => ({ ...prev, [questionId]: 'Correct answer!' }));
         setPoints(prev => prev + Math.floor(lab.points / (lab.investigativeQuestions?.length || 1)));
-        // Save solved state to localStorage
-        localStorage.setItem(`challenge_${lab.id}_${questionId}_solved`, 'true');
+        // Save solved state to localStorage with user ID
+        localStorage.setItem(`challenge_${lab.id}_${questionId}_solved_${user?.id}`, 'true');
       } else {
         setQuestionStatus(prev => ({ ...prev, [questionId]: 'incorrect' }));
         setQuestionMessages(prev => ({ ...prev, [questionId]: 'Incorrect answer. Try again.' }));
