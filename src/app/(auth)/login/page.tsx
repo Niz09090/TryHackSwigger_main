@@ -64,7 +64,7 @@ export default function LoginPage() {
           <div className="text-center mb-8">
             <div className="flex items-center justify-center space-x-2 mb-4">
               <Shield className="h-12 w-12 text-neon-green" />
-              <span className="text-3xl font-bold text-white">HackForge</span>
+              <span className="text-3xl font-bold text-white">TryHackSwigger</span>
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
             <p className="text-gray-400">Sign in to continue your hacking journey</p>
@@ -229,7 +229,7 @@ export default function LoginPage() {
               <div className="text-xs text-neon-green">
                 <p className="font-semibold mb-1">Security Notice:</p>
                 <p className="text-neon-green/80">
-                  HackForge uses industry-standard encryption to protect your data. 
+                  TryHackSwigger uses industry-standard encryption to protect your data. 
                   Never share your credentials with anyone.
                 </p>
               </div>

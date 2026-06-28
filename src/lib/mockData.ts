@@ -31,7 +31,7 @@ export const mockUsers: User[] = [
     id: '1',
     username: 'cyber_ninja',
     displayName: 'Cyber Ninja',
-    email: 'ninja@hackforge.io',
+    email: 'ninja@tryhackswigger.io',
     avatar: '/avatars/ninja.png',
     rank: 'Elite Hacker',
     points: 15420,
@@ -51,7 +51,7 @@ export const mockUsers: User[] = [
     id: '2',
     username: 'byte_warrior',
     displayName: 'Byte Warrior',
-    email: 'warrior@hackforge.io',
+    email: 'warrior@tryhackswigger.io',
     avatar: '/avatars/warrior.png',
     rank: 'Master Exploiter',
     points: 12350,
@@ -71,7 +71,7 @@ export const mockUsers: User[] = [
     id: '3',
     username: 'pixel_hacker',
     displayName: 'Pixel Hacker',
-    email: 'pixel@hackforge.io',
+    email: 'pixel@tryhackswigger.io',
     avatar: '/avatars/pixel.png',
     rank: 'Security Expert',
     points: 8900,
@@ -91,7 +91,7 @@ export const mockUsers: User[] = [
     id: '4',
     username: 'code_breaker',
     displayName: 'Code Breaker',
-    email: 'breaker@hackforge.io',
+    email: 'breaker@tryhackswigger.io',
     avatar: '/avatars/breaker.png',
     rank: 'Penetration Tester',
     points: 6750,
@@ -111,7 +111,7 @@ export const mockUsers: User[] = [
     id: '5',
     username: 'root_admin',
     displayName: 'Root Admin',
-    email: 'admin@hackforge.io',
+    email: 'admin@tryhackswigger.io',
     avatar: '/avatars/admin.png',
     rank: 'System Administrator',
     points: 5200,
@@ -147,7 +147,7 @@ export const mockLabs: Lab[] = [
       'Bypass basic filters'
     ],
     prerequisites: ['Basic SQL knowledge'],
-    flag: 'hackforge{sqli_1_union_select_rocks}',
+    flag: 'tryhackswigger{sqli_1_union_select_rocks}',
     hints: [
       { text: 'Try injecting quotes to see if the application is vulnerable', cost: 10 },
       { text: 'Use ORDER BY to determine the number of columns', cost: 20 },
@@ -158,7 +158,7 @@ export const mockLabs: Lab[] = [
     rating: 4.5,
     completions: 234,
     createdAt: '2024-01-15T10:00:00Z',
-    dockerImage: 'hackforge/sqli-basic:latest',
+    dockerImage: 'tryhackswigger/sqli-basic:latest',
     terminalEnabled: false,
     ports: [80]
   },
@@ -177,7 +177,7 @@ export const mockLabs: Lab[] = [
       'Understand CSP bypasses',
       'Exploit reflected XSS'
     ],
-    flag: 'hackforge{xss_reflected_flag_found}',
+    flag: 'tryhackswigger{xss_reflected_flag_found}',
     hints: [
       { text: 'Check the search functionality for reflection', cost: 10 },
       { text: 'Try different event handlers', cost: 20 },
@@ -188,7 +188,7 @@ export const mockLabs: Lab[] = [
     rating: 4.2,
     completions: 189,
     createdAt: '2024-01-20T10:00:00Z',
-    dockerImage: 'hackforge/xss-reflected:latest',
+    dockerImage: 'tryhackswigger/xss-reflected:latest',
     terminalEnabled: false,
     ports: [80]
   },
@@ -207,7 +207,7 @@ export const mockLabs: Lab[] = [
       'Bypass token validation',
       'Craft CSRF exploits'
     ],
-    flag: 'hackforge{csrf_bypass_flag_found}',
+    flag: 'tryhackswigger{csrf_bypass_flag_found}',
     hints: [
       { text: 'Analyze the token generation mechanism', cost: 15 },
       { text: 'Check if tokens are predictable', cost: 25 },
@@ -218,7 +218,7 @@ export const mockLabs: Lab[] = [
     rating: 4.7,
     completions: 98,
     createdAt: '2024-01-25T10:00:00Z',
-    dockerImage: 'hackforge/csrf-bypass:latest',
+    dockerImage: 'tryhackswigger/csrf-bypass:latest',
     terminalEnabled: false,
     ports: [80]
   },
@@ -237,7 +237,7 @@ export const mockLabs: Lab[] = [
       'Extract sensitive credentials',
       'Understand DNS rebinding'
     ],
-    flag: 'hackforge{ssrf_flag_found}',
+    flag: 'tryhackswigger{ssrf_flag_found}',
     hints: [
       { text: 'Cloud providers have metadata endpoints', cost: 10 },
       { text: 'AWS: 169.254.169.254', cost: 15 },
@@ -248,7 +248,7 @@ export const mockLabs: Lab[] = [
     rating: 4.8,
     completions: 67,
     createdAt: '2024-02-01T10:00:00Z',
-    dockerImage: 'hackforge/ssrf-basic:latest',
+    dockerImage: 'tryhackswigger/ssrf-basic:latest',
     terminalEnabled: false,
     ports: [80]
   },
@@ -267,7 +267,7 @@ export const mockLabs: Lab[] = [
       'Read local files via XXE',
       'Perform blind XXE attacks'
     ],
-    flag: 'hackforge{xxe_injection_flag}',
+    flag: 'tryhackswigger{xxe_injection_flag}',
     hints: [
       { text: 'Look for XML parsing functionality', cost: 10 },
       { text: 'Try external entity declarations', cost: 15 },
@@ -278,7 +278,7 @@ export const mockLabs: Lab[] = [
     rating: 4.4,
     completions: 112,
     createdAt: '2024-02-10T10:00:00Z',
-    dockerImage: 'hackforge/xxe-injection:latest',
+    dockerImage: 'tryhackswigger/xxe-injection:latest',
     terminalEnabled: false,
     ports: [80]
   },
@@ -297,7 +297,7 @@ export const mockLabs: Lab[] = [
       'Access unauthorized data',
       'Understand access control flaws'
     ],
-    flag: 'hackforge{idor_flag_found}',
+    flag: 'tryhackswigger{idor_flag_found}',
     hints: [
       { text: 'Check URL parameters for object IDs', cost: 10 },
       { text: 'Try changing user IDs in requests', cost: 15 },
@@ -308,7 +308,7 @@ export const mockLabs: Lab[] = [
     rating: 4.1,
     completions: 156,
     createdAt: '2024-02-15T10:00:00Z',
-    dockerImage: 'hackforge/idor-basic:latest',
+    dockerImage: 'tryhackswigger/idor-basic:latest',
     terminalEnabled: false,
     ports: [80]
   },
@@ -327,7 +327,7 @@ export const mockLabs: Lab[] = [
       'Forge malicious tokens',
       'Bypass authentication mechanisms'
     ],
-    flag: 'hackforge{jwt_bypass_flag}',
+    flag: 'tryhackswigger{jwt_bypass_flag}',
     hints: [
       { text: 'Analyze the JWT algorithm', cost: 15 },
       { text: 'Try brute-forcing the secret', cost: 25 },
@@ -338,7 +338,7 @@ export const mockLabs: Lab[] = [
     rating: 4.9,
     completions: 45,
     createdAt: '2024-02-20T10:00:00Z',
-    dockerImage: 'hackforge/jwt-bypass:latest',
+    dockerImage: 'tryhackswigger/jwt-bypass:latest',
     terminalEnabled: false,
     ports: [80]
   },
@@ -357,7 +357,7 @@ export const mockLabs: Lab[] = [
       'Abuse cron jobs',
       'Escalate to root access'
     ],
-    flag: 'hackforge{privesc_linux_root_flag}',
+    flag: 'tryhackswigger{privesc_linux_root_flag}',
     hints: [
       { text: 'Check for SUID binaries with find / -perm -4000', cost: 15 },
       { text: 'Look for world-writable cron jobs', cost: 20 },
@@ -368,7 +368,7 @@ export const mockLabs: Lab[] = [
     rating: 4.6,
     completions: 78,
     createdAt: '2024-02-25T10:00:00Z',
-    dockerImage: 'hackforge/privesc-linux:latest',
+    dockerImage: 'tryhackswigger/privesc-linux:latest',
     terminalEnabled: true,
     ports: [7681]
   },
@@ -387,7 +387,7 @@ export const mockLabs: Lab[] = [
       'Execute system commands',
       'Maintain persistence'
     ],
-    flag: 'hackforge{file_upload_flag_found}',
+    flag: 'tryhackswigger{file_upload_flag_found}',
     hints: [
       { text: 'Try different file extensions', cost: 10 },
       { text: 'Use double extensions', cost: 15 },
@@ -398,7 +398,7 @@ export const mockLabs: Lab[] = [
     rating: 4.3,
     completions: 134,
     createdAt: '2024-03-01T10:00:00Z',
-    dockerImage: 'hackforge/file-upload:latest',
+    dockerImage: 'tryhackswigger/file-upload:latest',
     terminalEnabled: false,
     ports: [80]
   },
@@ -417,7 +417,7 @@ export const mockLabs: Lab[] = [
       'Execute system commands',
       'Chain commands for complex attacks'
     ],
-    flag: 'hackforge{cmd_injection_flag}',
+    flag: 'tryhackswigger{cmd_injection_flag}',
     hints: [
       { text: 'Look for system() calls in backend', cost: 10 },
       { text: 'Try command chaining with ; && ||', cost: 15 },
@@ -428,7 +428,7 @@ export const mockLabs: Lab[] = [
     rating: 4.5,
     completions: 145,
     createdAt: '2024-03-05T10:00:00Z',
-    dockerImage: 'hackforge/cmd-injection:latest',
+    dockerImage: 'tryhackswigger/cmd-injection:latest',
     terminalEnabled: false,
     ports: [80]
   },
@@ -447,7 +447,7 @@ export const mockLabs: Lab[] = [
       'Read sensitive files',
       'Bypass file inclusion filters'
     ],
-    flag: 'hackforge{lfi_file_reader_flag}',
+    flag: 'tryhackswigger{lfi_file_reader_flag}',
     hints: [
       { text: 'Look for file inclusion in parameters', cost: 10 },
       { text: 'Use ../ for path traversal', cost: 15 },
@@ -458,7 +458,7 @@ export const mockLabs: Lab[] = [
     rating: 4.0,
     completions: 178,
     createdAt: '2024-03-10T10:00:00Z',
-    dockerImage: 'hackforge/lfi-basic:latest',
+    dockerImage: 'tryhackswigger/lfi-basic:latest',
     terminalEnabled: false,
     ports: [80]
   },
@@ -477,7 +477,7 @@ export const mockLabs: Lab[] = [
       'Craft exploit payloads',
       'Gain shell access'
     ],
-    flag: 'hackforge{bof_exploit_success}',
+    flag: 'tryhackswigger{bof_exploit_success}',
     hints: [
       { text: 'Use pattern_create.rb to find offset', cost: 20 },
       { text: 'Check for stack canaries', cost: 25 },
@@ -488,7 +488,7 @@ export const mockLabs: Lab[] = [
     rating: 4.9,
     completions: 23,
     createdAt: '2024-03-15T10:00:00Z',
-    dockerImage: 'hackforge/bof-basic:latest',
+    dockerImage: 'tryhackswigger/bof-basic:latest',
     terminalEnabled: true,
     ports: [7681]
   },
@@ -508,7 +508,7 @@ export const mockLabs: Lab[] = [
       'Determine attack vectors'
     ],
     prerequisites: ['Basic log analysis knowledge'],
-    flag: 'hackforge{log_analysis_sqli_detected}',
+    flag: 'tryhackswigger{log_analysis_sqli_detected}',
     hints: [
       { text: 'Look for unusual patterns in the access logs', cost: 15 },
       { text: 'SQL injection often contains UNION or OR statements', cost: 20 },
@@ -519,7 +519,7 @@ export const mockLabs: Lab[] = [
     rating: 4.4,
     completions: 89,
     createdAt: '2024-03-20T10:00:00Z',
-    dockerImage: 'hackforge/sqli-basic:latest',
+    dockerImage: 'tryhackswigger/sqli-basic:latest',
     terminalEnabled: false,
     ports: [80],
     type: LabTeamType.BLUE_TEAM,
@@ -561,7 +561,7 @@ export const mockLabs: Lab[] = [
       'Determine attack timeline'
     ],
     prerequisites: ['Basic Linux log analysis'],
-    flag: 'hackforge{ssh_brute_force_detected}',
+    flag: 'tryhackswigger{ssh_brute_force_detected}',
     hints: [
       { text: 'Look for repeated failed authentication attempts', cost: 10 },
       { text: 'Check /var/log/auth.log or /var/log/secure', cost: 15 },
@@ -572,7 +572,7 @@ export const mockLabs: Lab[] = [
     rating: 0,
     completions: 0,
     createdAt: '2024-03-25T10:00:00Z',
-    dockerImage: 'hackforge/sqli-basic:latest',
+    dockerImage: 'tryhackswigger/sqli-basic:latest',
     terminalEnabled: false,
     ports: [80],
     type: LabTeamType.BLUE_TEAM,
@@ -614,7 +614,7 @@ export const mockLabs: Lab[] = [
       'Trace attacker post-exploitation activity'
     ],
     prerequisites: ['Web server log analysis', 'PHP basics'],
-    flag: 'hackforge{web_shell_detected}',
+    flag: 'tryhackswigger{web_shell_detected}',
     hints: [
       { text: 'Look for unusual file upload requests', cost: 15 },
       { text: 'Check for POST requests to upload endpoints', cost: 20 },
@@ -625,7 +625,7 @@ export const mockLabs: Lab[] = [
     rating: 0,
     completions: 0,
     createdAt: '2024-03-26T10:00:00Z',
-    dockerImage: 'hackforge/file-upload:latest',
+    dockerImage: 'tryhackswigger/file-upload:latest',
     terminalEnabled: false,
     ports: [80],
     type: LabTeamType.BLUE_TEAM,
@@ -673,7 +673,7 @@ export const mockLabs: Lab[] = [
       'Track file encryption activities'
     ],
     prerequisites: ['Windows Event Log analysis', 'Malware analysis basics'],
-    flag: 'hackforge{ransomware_iocs_found}',
+    flag: 'tryhackswigger{ransomware_iocs_found}',
     hints: [
       { text: 'Check Security Event Log for process creation', cost: 20 },
       { text: 'Look for unusual PowerShell execution', cost: 25 },
@@ -684,7 +684,7 @@ export const mockLabs: Lab[] = [
     rating: 0,
     completions: 0,
     createdAt: '2024-03-27T10:00:00Z',
-    dockerImage: 'hackforge/cmd-injection:latest',
+    dockerImage: 'tryhackswigger/cmd-injection:latest',
     terminalEnabled: false,
     ports: [80],
     type: LabTeamType.BLUE_TEAM,
@@ -732,7 +732,7 @@ export const mockLabs: Lab[] = [
       'Map attacker movement through network'
     ],
     prerequisites: ['Active Directory log analysis', 'Windows security basics'],
-    flag: 'hackforge{lateral_movement_detected}',
+    flag: 'tryhackswigger{lateral_movement_detected}',
     hints: [
       { text: 'Look for failed logins from the same account across multiple hosts', cost: 15 },
       { text: 'Check Event ID 4625 for failed logons', cost: 20 },
@@ -743,7 +743,7 @@ export const mockLabs: Lab[] = [
     rating: 0,
     completions: 0,
     createdAt: '2024-03-28T10:00:00Z',
-    dockerImage: 'hackforge/jwt-bypass:latest',
+    dockerImage: 'tryhackswigger/jwt-bypass:latest',
     terminalEnabled: false,
     ports: [80],
     type: LabTeamType.BLUE_TEAM,
@@ -791,7 +791,7 @@ export const mockLabs: Lab[] = [
       'Detect phishing indicators'
     ],
     prerequisites: ['Email protocol basics', 'Header analysis'],
-    flag: 'hackforge{phishing_headers_analyzed}',
+    flag: 'tryhackswigger{phishing_headers_analyzed}',
     hints: [
       { text: 'Check the Received headers to trace the email path', cost: 10 },
       { text: 'Look for SPF/DKIM/DMARC authentication results', cost: 15 },
@@ -802,7 +802,7 @@ export const mockLabs: Lab[] = [
     rating: 0,
     completions: 0,
     createdAt: '2024-03-29T10:00:00Z',
-    dockerImage: 'hackforge/csrf-bypass:latest',
+    dockerImage: 'tryhackswigger/csrf-bypass:latest',
     terminalEnabled: false,
     ports: [80],
     type: LabTeamType.BLUE_TEAM,
@@ -850,7 +850,7 @@ export const mockLabs: Lab[] = [
       'Track suspicious command execution'
     ],
     prerequisites: ['Linux system administration', 'Auditd log analysis'],
-    flag: 'hackforge{privilege_escalation_detected}',
+    flag: 'tryhackswigger{privilege_escalation_detected}',
     hints: [
       { text: 'Look for sudo commands in audit logs', cost: 20 },
       { text: 'Check for execution of shell commands with elevated privileges', cost: 25 },
@@ -861,7 +861,7 @@ export const mockLabs: Lab[] = [
     rating: 0,
     completions: 0,
     createdAt: '2024-03-30T10:00:00Z',
-    dockerImage: 'hackforge/privesc-linux:latest',
+    dockerImage: 'tryhackswigger/privesc-linux:latest',
     terminalEnabled: false,
     ports: [80],
     type: LabTeamType.BLUE_TEAM,
@@ -909,7 +909,7 @@ export const mockLabs: Lab[] = [
       'Extract malware beacon intervals'
     ],
     prerequisites: ['Network protocols', 'PCAP analysis', 'DNS fundamentals'],
-    flag: 'hackforge{dns_c2_traffic_analyzed}',
+    flag: 'tryhackswigger{dns_c2_traffic_analyzed}',
     hints: [
       { text: 'Look for unusually long DNS query names', cost: 25 },
       { text: 'Check for high-frequency DNS requests to the same domain', cost: 30 },
@@ -920,7 +920,7 @@ export const mockLabs: Lab[] = [
     rating: 0,
     completions: 0,
     createdAt: '2024-03-31T10:00:00Z',
-    dockerImage: 'hackforge/ssrf-basic:latest',
+    dockerImage: 'tryhackswigger/ssrf-basic:latest',
     terminalEnabled: false,
     ports: [80],
     type: LabTeamType.BLUE_TEAM,
@@ -1547,11 +1547,11 @@ export const mockForumThreads: ForumThread[] = [
   },
   {
     id: '3',
-    title: 'Welcome to HackForge - Read This First!',
-    content: 'Welcome to HackForge community! Please read our community guidelines and introduce yourself here. We\'re excited to have you join us on your cybersecurity learning journey!',
+    title: 'Welcome to TryHackSwigger - Read This First!',
+    content: 'Welcome to TryHackSwigger community! Please read our community guidelines and introduce yourself here. We\'re excited to have you join us on your cybersecurity learning journey!',
     author: {
       id: 'admin',
-      username: 'hackforge_admin',
+      username: 'tryhackswigger_admin',
       avatar: '/avatars/admin.png',
       rank: 'Administrator'
     },

@@ -122,7 +122,7 @@ export default function RegisterPage() {
           <div className="text-center mb-8">
             <div className="flex items-center justify-center space-x-2 mb-4">
               <Shield className="h-12 w-12 text-neon-green" />
-              <span className="text-3xl font-bold text-white">HackForge</span>
+              <span className="text-3xl font-bold text-white">TryHackSwigger</span>
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Join the Community</h1>
             <p className="text-gray-400">Start your cybersecurity journey today</p>

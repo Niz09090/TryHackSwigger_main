@@ -71,7 +71,7 @@ export default function LandingPage() {
       <section className="py-20 bg-surface-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 text-neon-cyan">Why HackForge?</h2>
+            <h2 className="text-4xl font-bold mb-4 text-neon-cyan">Why TryHackSwigger?</h2>
             <p className="text-xl text-gray-300">
               Everything you need to become a cybersecurity expert, all in one platform
             </p>
@@ -290,7 +290,7 @@ export default function LandingPage() {
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <Shield className="h-8 w-8 text-neon-green" />
-                <span className="text-xl font-bold text-white">HackForge</span>
+                <span className="text-xl font-bold text-white">TryHackSwigger</span>
               </div>
               <p className="text-gray-400">
                 The ultimate platform for learning cybersecurity through hands-on practice and competition.
@@ -326,7 +326,7 @@ export default function LandingPage() {
           </div>
           
           <div className="border-t border-border-dark mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 HackForge. All rights reserved. | 
+            <p>&copy; 2024 TryHackSwigger. All rights reserved. | 
               <Link href="/privacy" className="hover:text-neon-green transition-colors ml-2">Privacy</Link> | 
               <Link href="/terms" className="hover:text-neon-green transition-colors ml-2">Terms</Link>
             </p>

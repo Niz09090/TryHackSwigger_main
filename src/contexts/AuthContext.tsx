@@ -24,12 +24,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check for existing session on mount
-    const storedUser = localStorage.getItem('hackforge_user');
+    const storedUser = localStorage.getItem('tryhackswigger_user');
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (e) {
-        localStorage.removeItem('hackforge_user');
+        localStorage.removeItem('tryhackswigger_user');
       }
     }
     setIsLoading(false);
@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Mock authentication - in production this would be a real API call
       if (email === currentUser.email && password === 'password123') {
         setUser(currentUser);
-        localStorage.setItem('hackforge_user', JSON.stringify(currentUser));
+        localStorage.setItem('tryhackswigger_user', JSON.stringify(currentUser));
       } else {
         throw new Error('Invalid email or password');
       }
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       };
       
       setUser(newUser);
-      localStorage.setItem('hackforge_user', JSON.stringify(newUser));
+      localStorage.setItem('tryhackswigger_user', JSON.stringify(newUser));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
       throw err;
@@ -87,14 +87,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('hackforge_user');
+    localStorage.removeItem('tryhackswigger_user');
   };
 
   const updateUser = (userData: Partial<User>) => {
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
-      localStorage.setItem('hackforge_user', JSON.stringify(updatedUser));
+      localStorage.setItem('tryhackswigger_user', JSON.stringify(updatedUser));
     }
   };
 

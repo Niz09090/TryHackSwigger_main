@@ -18,7 +18,7 @@ docker.ping((err) => {
   }
 });
 
-export const LAB_NETWORK = 'hackforge-network';
+export const LAB_NETWORK = 'tryhackswigger-network';
 const LAB_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 hours
 
 /** True when this Node process is running inside a Docker container. */
@@ -132,7 +132,7 @@ async function buildImageIfNeeded(labId: string, dockerImage: string, labType?: 
     throw new Error(`No Dockerfile found for lab ID: ${labId}`);
   }
 
-  const imageName = `hackforge/${dockerfilePath.split('/').pop()}:latest`;
+  const imageName = `tryhackswigger/${dockerfilePath.split('/').pop()}:latest`;
   
   try {
     await docker.getImage(imageName).inspect();
