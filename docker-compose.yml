@@ -26,7 +26,7 @@ services:
     restart: unless-stopped
     networks:
       - default
-      - hackforge-network
+      - tryhackswigger-network
     volumes:
       - hackforge-data:/app/data
       - ${LAB_DOCKER_DIR:-./docker}:/app/docker:ro
@@ -62,6 +62,6 @@ volumes:
 networks:
   default:
     driver: bridge
-  hackforge-network:
-    name: hackforge-network
-    driver: bridge
+  tryhackswigger-network:
+    name: tryhackswigger-network
+    external: true
