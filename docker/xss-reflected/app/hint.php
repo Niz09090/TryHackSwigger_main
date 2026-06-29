@@ -73,7 +73,7 @@
         
         <div class="hint">
             <h3>Hint 3</h3>
-            <p>Search for "flag" or "hackforge" to trigger the flag display.</p>
+            <p>Search for "flag" or "tryhackswigger" to trigger the flag display.</p>
         </div>
         
         <div class="back">

@@ -172,7 +172,7 @@ if ($search) {
                     <h2>🔓 XSS Detected!</h2>
                     <p>Your payload was executed successfully.</p>
                     <div class="flag">
-                        🏆 Flag: hackforge{xss_reflected_flag_found}
+                        🏆 Flag: tryhackswigger{xss_reflected_flag_found}
                     </div>
                 </div>
             <?php endif; ?>

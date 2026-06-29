@@ -26,7 +26,7 @@ $users = [
         'role' => 'admin',
         'bio' => 'System administrator. Keeping things secure and running smoothly.',
         'posts' => ['System maintenance scheduled.', 'Security audit completed.'],
-        'private_data' => ['api_key' => 'admin_master_key', 'secret' => 'admin_secret', 'flag' => 'hackforge{idor_flag_found}']
+        'private_data' => ['api_key' => 'admin_master_key', 'secret' => 'admin_secret', 'flag' => 'tryhackswigger{idor_flag_found}']
     ]
 ];
 

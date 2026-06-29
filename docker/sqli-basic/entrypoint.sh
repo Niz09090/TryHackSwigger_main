@@ -55,7 +55,7 @@ VALUES (2, 'john', 'password1', 'Employee', 'Sales', 'john@techcorp.com');
 INSERT IGNORE INTO users (id, username, password, role, department, email)
 VALUES (3, 'sarah', 'pass123', 'Employee', 'HR', 'sarah@techcorp.com');
 INSERT IGNORE INTO admin_secrets (id, secret_key, flag)
-VALUES (1, 'master_key_2024', 'hackforge{sqli_1_union_select_rocks}');
+VALUES (1, 'master_key_2024', 'tryhackswigger{sqli_1_union_select_rocks}');
 "
 
 echo "Database setup complete!"

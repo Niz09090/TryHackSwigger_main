@@ -1,91 +1,91 @@
 #!/bin/bash
 
-# Build all Docker images for HackForge labs
+# Build all Docker images for TryHackSwigger labs
 
-echo "Building HackForge lab Docker images..."
+echo "Building TryHackSwigger lab Docker images..."
 
-docker build -t hackforge/sqli-basic:latest ./sqli-basic
+docker build -t tryhackswigger/sqli-basic:latest ./sqli-basic
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/sqli-basic:latest"
+    echo "✓ Built tryhackswigger/sqli-basic:latest"
 else
-    echo "✗ Failed to build hackforge/sqli-basic:latest"
+    echo "✗ Failed to build tryhackswigger/sqli-basic:latest"
 fi
 
-docker build -t hackforge/xss-reflected:latest ./xss-reflected
+docker build -t tryhackswigger/xss-reflected:latest ./xss-reflected
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/xss-reflected:latest"
+    echo "✓ Built tryhackswigger/xss-reflected:latest"
 else
-    echo "✗ Failed to build hackforge/xss-reflected:latest"
+    echo "✗ Failed to build tryhackswigger/xss-reflected:latest"
 fi
 
-docker build -t hackforge/csrf-bypass:latest ./csrf-bypass
+docker build -t tryhackswigger/csrf-bypass:latest ./csrf-bypass
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/csrf-bypass:latest"
+    echo "✓ Built tryhackswigger/csrf-bypass:latest"
 else
-    echo "✗ Failed to build hackforge/csrf-bypass:latest"
+    echo "✗ Failed to build tryhackswigger/csrf-bypass:latest"
 fi
 
-docker build -t hackforge/lfi-basic:latest ./lfi-basic
+docker build -t tryhackswigger/lfi-basic:latest ./lfi-basic
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/lfi-basic:latest"
+    echo "✓ Built tryhackswigger/lfi-basic:latest"
 else
-    echo "✗ Failed to build hackforge/lfi-basic:latest"
+    echo "✗ Failed to build tryhackswigger/lfi-basic:latest"
 fi
 
-docker build -t hackforge/cmd-injection:latest ./cmd-injection
+docker build -t tryhackswigger/cmd-injection:latest ./cmd-injection
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/cmd-injection:latest"
+    echo "✓ Built tryhackswigger/cmd-injection:latest"
 else
-    echo "✗ Failed to build hackforge/cmd-injection:latest"
+    echo "✗ Failed to build tryhackswigger/cmd-injection:latest"
 fi
 
-docker build -t hackforge/file-upload:latest ./file-upload
+docker build -t tryhackswigger/file-upload:latest ./file-upload
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/file-upload:latest"
+    echo "✓ Built tryhackswigger/file-upload:latest"
 else
-    echo "✗ Failed to build hackforge/file-upload:latest"
+    echo "✗ Failed to build tryhackswigger/file-upload:latest"
 fi
 
-docker build -t hackforge/xxe-injection:latest ./xxe-injection
+docker build -t tryhackswigger/xxe-injection:latest ./xxe-injection
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/xxe-injection:latest"
+    echo "✓ Built tryhackswigger/xxe-injection:latest"
 else
-    echo "✗ Failed to build hackforge/xxe-injection:latest"
+    echo "✗ Failed to build tryhackswigger/xxe-injection:latest"
 fi
 
-docker build -t hackforge/ssrf-basic:latest ./ssrf-basic
+docker build -t tryhackswigger/ssrf-basic:latest ./ssrf-basic
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/ssrf-basic:latest"
+    echo "✓ Built tryhackswigger/ssrf-basic:latest"
 else
-    echo "✗ Failed to build hackforge/ssrf-basic:latest"
+    echo "✗ Failed to build tryhackswigger/ssrf-basic:latest"
 fi
 
-docker build -t hackforge/jwt-bypass:latest ./jwt-bypass
+docker build -t tryhackswigger/jwt-bypass:latest ./jwt-bypass
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/jwt-bypass:latest"
+    echo "✓ Built tryhackswigger/jwt-bypass:latest"
 else
-    echo "✗ Failed to build hackforge/jwt-bypass:latest"
+    echo "✗ Failed to build tryhackswigger/jwt-bypass:latest"
 fi
 
-docker build -t hackforge/idor-basic:latest ./idor-basic
+docker build -t tryhackswigger/idor-basic:latest ./idor-basic
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/idor-basic:latest"
+    echo "✓ Built tryhackswigger/idor-basic:latest"
 else
-    echo "✗ Failed to build hackforge/idor-basic:latest"
+    echo "✗ Failed to build tryhackswigger/idor-basic:latest"
 fi
 
-docker build -t hackforge/privesc-linux:latest ./privesc-linux
+docker build -t tryhackswigger/privesc-linux:latest ./privesc-linux
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/privesc-linux:latest"
+    echo "✓ Built tryhackswigger/privesc-linux:latest"
 else
-    echo "✗ Failed to build hackforge/privesc-linux:latest"
+    echo "✗ Failed to build tryhackswigger/privesc-linux:latest"
 fi
 
-docker build -t hackforge/bof-basic:latest ./bof-basic
+docker build -t tryhackswigger/bof-basic:latest ./bof-basic
 if [ $? -eq 0 ]; then
-    echo "✓ Built hackforge/bof-basic:latest"
+    echo "✓ Built tryhackswigger/bof-basic:latest"
 else
-    echo "✗ Failed to build hackforge/bof-basic:latest"
+    echo "✗ Failed to build tryhackswigger/bof-basic:latest"
 fi
 
 echo ""

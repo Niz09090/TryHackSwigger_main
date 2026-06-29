@@ -26,12 +26,12 @@ RUN gcc -fno-stack-protector -no-pie -z execstack -o /vulnerable /tmp/vulnerable
 RUN rm /tmp/vulnerable.c
 
 # Create flag
-RUN echo 'hackforge{bof_exploit_success}' > /root/flag.txt
+RUN echo 'tryhackswigger{bof_exploit_success}' > /root/flag.txt
 RUN chmod 600 /root/flag.txt
 
 # Add decoy flags
-RUN echo 'hackforge{fake_bof_flag}' > /tmp/decoy.txt
-RUN mkdir -p /home/user && echo 'hackforge{not_real_flag}' > /home/user/.secret
+RUN echo 'tryhackswigger{fake_bof_flag}' > /tmp/decoy.txt
+RUN mkdir -p /home/user && echo 'tryhackswigger{not_real_flag}' > /home/user/.secret
 
 # Expose ttyd port
 EXPOSE 7681

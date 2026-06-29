@@ -31,8 +31,8 @@ if ($url) {
         if ($response !== false) {
             $result = "HTTP $httpCode: " . htmlspecialchars(substr($response, 0, 1000));
             
-            if (strpos($response, 'flag') !== false || strpos($response, 'hackforge') !== false) {
-                $result .= " - Flag: hackforge{ssrf_flag_found}";
+            if (strpos($response, 'flag') !== false || strpos($response, 'tryhackswigger') !== false) {
+                $result .= " - Flag: tryhackswigger{ssrf_flag_found}";
             }
         } else {
             $error = 'Failed to fetch URL';

@@ -22,8 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['xml_data'])) {
         $result .= '</div>';
         
         // Check for flag in XML
-        if (strpos($xmlData, 'flag') !== false || strpos($xmlData, 'hackforge') !== false) {
-            $result .= '<div class="flag">🏆 Flag: hackforge{xxe_injection_flag}</div>';
+        if (strpos($xmlData, 'flag') !== false || strpos($xmlData, 'tryhackswigger') !== false) {
+            $result .= '<div class="flag">🏆 Flag: tryhackswigger{xxe_injection_flag}</div>';
         }
     } catch (Exception $e) {
         $error = 'Error parsing XML: ' . $e->getMessage();
