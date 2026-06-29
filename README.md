@@ -195,17 +195,6 @@ The platform includes 12 hands-on security labs covering:
 
 See `DEMO_GUIDE.md` for detailed exploitation guides for each lab.
 
-## 📸 Screenshots & Gallery
-
-### Platform Overview
-
-| Screenshot | Description |
-|------------|-------------|
-| ![TryHackSwigger Landing Page](/assets/readme/landing.png) | **Landing Page** - Main introduction screen showcasing the platform's value proposition and key features |
-| ![King of the Hill / Compete Page](/assets/readme/compete.png) | **Competitions** - King of the Hill and other CTF events with live competition layouts |
-| ![Interactive Lab Challenges](/assets/readme/labs.png) | **Lab Challenges** - Live question submission system with Docker-powered environments |
-| ![Active Leaderboard & Statistics](/assets/readme/leaderboard.png) | **Leaderboard** - Global rankings, Rising Stars, and master statistics panels |
-
 ### Feature Highlights
 
 - **Dark Theme UI** - Modern, eye-friendly interface optimized for long hacking sessions
