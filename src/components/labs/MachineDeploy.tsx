@@ -5,14 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Play, X, RefreshCw, Terminal, Clock, Server, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { LabTeamType } from '@/lib/types';
 
 interface MachineDeployProps {
   labId: string;
   dockerImage: string;
   ports: number[];
   terminalEnabled: boolean;
-  teamType?: LabTeamType;
 }
 
 interface ContainerInfo {
@@ -32,7 +30,7 @@ interface ContainerStatus {
   terminalPort?: number;
 }
 
-export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabled, teamType }: MachineDeployProps) {
+export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabled }: MachineDeployProps) {
   const { user } = useAuth();
   const [containerInfo, setContainerInfo] = useState<ContainerInfo | null>(null);
   const [containerStatus, setContainerStatus] = useState<ContainerStatus | null>(null);
@@ -98,10 +96,10 @@ export default function MachineDeploy({ labId, dockerImage, ports, terminalEnabl
 
   const handleDeploy = async () => {
     if (!user) return;
-
+    
     setIsLoading(true);
     setError(null);
-
+    
     try {
       const response = await fetch('/api/labs/deploy', {
         method: 'POST',

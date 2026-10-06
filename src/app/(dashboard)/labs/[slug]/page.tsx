@@ -327,7 +327,6 @@ export default function LabDetailPage() {
             dockerImage={lab.dockerImage}
             ports={lab.ports}
             terminalEnabled={lab.terminalEnabled}
-            teamType={lab.type}
           />
         </div>
 
